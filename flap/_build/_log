@@ -1,0 +1,61 @@
+### Starting build.
+# Target: src/flap.ml.depends, tags: { extension:ml, file:src/flap.ml, ocaml, ocamldep, package(str), package(unix), quiet, traverse }
+ocamlfind ocamldep -package unix -package str -modules src/flap.ml > src/flap.ml.depends # cached
+# Target: src/commandLineOptions.ml.depends, tags: { extension:ml, file:src/commandLineOptions.ml, ocaml, ocamldep, package(str), package(unix), quiet, traverse }
+ocamlfind ocamldep -package unix -package str -modules src/commandLineOptions.ml > src/commandLineOptions.ml.depends # cached
+# Target: src/options.ml.depends, tags: { extension:ml, file:src/options.ml, ocaml, ocamldep, package(str), package(unix), quiet, traverse }
+ocamlfind ocamldep -package unix -package str -modules src/options.ml > src/options.ml.depends # cached
+# Target: src/utilities/error.mli.depends, tags: { extension:mli, file:src/utilities/error.mli, ocaml, ocamldep, package(str), package(unix), quiet, traverse }
+ocamlfind ocamldep -package unix -package str -modules src/utilities/error.mli > src/utilities/error.mli.depends # cached
+# Target: src/utilities/position.mli.depends, tags: { extension:mli, file:src/utilities/position.mli, ocaml, ocamldep, package(str), package(unix), quiet, traverse }
+ocamlfind ocamldep -package unix -package str -modules src/utilities/position.mli > src/utilities/position.mli.depends # cached
+# Target: src/utilities/position.cmi, tags: { byte, compile, extension:mli, file:src/utilities/position.mli, interf, ocaml, package(str), package(unix), quiet, traverse }
+ocamlfind ocamlc -c -annot -bin-annot -package unix -package str -I src/utilities -I src -I src/hopix -I src/common -I src/lib/pprint -o src/utilities/position.cmi src/utilities/position.mli # cached
+# Target: src/utilities/error.cmi, tags: { byte, compile, extension:mli, file:src/utilities/error.mli, interf, ocaml, package(str), package(unix), quiet, traverse }
+ocamlfind ocamlc -c -annot -bin-annot -package unix -package str -I src/utilities -I src -I src/hopix -I src/common -I src/lib/pprint -o src/utilities/error.cmi src/utilities/error.mli # cached
+# Target: src/utilities/extStd.ml.depends, tags: { extension:ml, file:src/utilities/extStd.ml, ocaml, ocamldep, package(str), package(unix), quiet, traverse }
+ocamlfind ocamldep -package unix -package str -modules src/utilities/extStd.ml > src/utilities/extStd.ml.depends # cached
+# Target: src/utilities/extStd.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:src/utilities/extStd.cmo, file:src/utilities/extStd.ml, implem, ocaml, package(str), package(unix), quiet, traverse }
+ocamlfind ocamlc -c -annot -bin-annot -package unix -package str -I src/utilities -I src -I src/hopix -I src/common -I src/lib/pprint -o src/utilities/extStd.cmo src/utilities/extStd.ml # cached
+# Target: src/options.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:src/options.cmo, file:src/options.ml, implem, ocaml, package(str), package(unix), quiet, traverse }
+ocamlfind ocamlc -c -annot -bin-annot -package unix -package str -I src -I src/hopix -I src/utilities -I src/common -I src/lib/pprint -o src/options.cmo src/options.ml # cached
+# Target: src/version.ml.depends, tags: { extension:ml, file:src/version.ml, ocaml, ocamldep, package(str), package(unix), quiet, traverse }
+ocamlfind ocamldep -package unix -package str -modules src/version.ml > src/version.ml.depends # cached
+# Target: src/version.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:src/version.cmo, file:src/version.ml, implem, ocaml, package(str), package(unix), quiet, traverse }
+ocamlfind ocamlc -c -annot -bin-annot -package unix -package str -I src -I src/hopix -I src/utilities -I src/common -I src/lib/pprint -o src/version.cmo src/version.ml # cached
+# Target: src/common/compilers.mli.depends, tags: { extension:mli, file:src/common/compilers.mli, ocaml, ocamldep, package(str), package(unix), quiet, traverse }
+ocamlfind ocamldep -package unix -package str -modules src/common/compilers.mli > src/common/compilers.mli.depends # cached
+# Target: src/common/languages.mli.depends, tags: { extension:mli, file:src/common/languages.mli, ocaml, ocamldep, package(str), package(unix), quiet, traverse }
+ocamlfind ocamldep -package unix -package str -modules src/common/languages.mli > src/common/languages.mli.depends # cached
+# Target: src/common/languages.cmi, tags: { byte, compile, extension:mli, file:src/common/languages.mli, interf, ocaml, package(str), package(unix), quiet, traverse }
+ocamlfind ocamlc -c -annot -bin-annot -package unix -package str -I src/common -I src -I src/hopix -I src/utilities -I src/lib/pprint -o src/common/languages.cmi src/common/languages.mli # cached
+# Target: src/common/compilers.cmi, tags: { byte, compile, extension:mli, file:src/common/compilers.mli, interf, ocaml, package(str), package(unix), quiet, traverse }
+ocamlfind ocamlc -c -annot -bin-annot -package unix -package str -I src/common -I src -I src/hopix -I src/utilities -I src/lib/pprint -o src/common/compilers.cmi src/common/compilers.mli # cached
+# Target: src/hopix/hopixInitialization.ml.depends, tags: { extension:ml, file:src/hopix/hopixInitialization.ml, ocaml, ocamldep, package(str), package(unix), quiet, traverse }
+ocamlfind ocamldep -package unix -package str -modules src/hopix/hopixInitialization.ml > src/hopix/hopixInitialization.ml.depends # cached
+# Target: src/hopix/hopix.ml.depends, tags: { extension:ml, file:src/hopix/hopix.ml, ocaml, ocamldep, package(str), package(unix), quiet, traverse }
+ocamlfind ocamldep -package unix -package str -modules src/hopix/hopix.ml > src/hopix/hopix.ml.depends # cached
+# Target: src/hopix/hopixAST.ml.depends, tags: { extension:ml, file:src/hopix/hopixAST.ml, ocaml, ocamldep, package(str), package(unix), quiet, traverse }
+ocamlfind ocamldep -package unix -package str -modules src/hopix/hopixAST.ml > src/hopix/hopixAST.ml.depends # cached
+# Target: src/hopix/hopixAST.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:src/hopix/hopixAST.cmo, file:src/hopix/hopixAST.ml, implem, ocaml, package(str), package(unix), quiet, traverse }
+ocamlfind ocamlc -c -annot -bin-annot -package unix -package str -I src/hopix -I src -I src/utilities -I src/common -I src/lib/pprint -o src/hopix/hopixAST.cmo src/hopix/hopixAST.ml # cached
+# Target: src/hopix/hopixInterpreter.ml.depends, tags: { extension:ml, file:src/hopix/hopixInterpreter.ml, ocaml, ocamldep, package(str), package(unix), quiet, traverse }
+ocamlfind ocamldep -package unix -package str -modules src/hopix/hopixInterpreter.ml > src/hopix/hopixInterpreter.ml.depends # cached
+# Target: src/common/memory.mli.depends, tags: { extension:mli, file:src/common/memory.mli, ocaml, ocamldep, package(str), package(unix), quiet, traverse }
+ocamlfind ocamldep -package unix -package str -modules src/common/memory.mli > src/common/memory.mli.depends # cached
+# Target: src/common/memory.cmi, tags: { byte, compile, extension:mli, file:src/common/memory.mli, interf, ocaml, package(str), package(unix), quiet, traverse }
+ocamlfind ocamlc -c -annot -bin-annot -package unix -package str -I src/common -I src -I src/hopix -I src/utilities -I src/lib/pprint -o src/common/memory.cmi src/common/memory.mli # cached
+# Target: src/hopix/hopixLexer.mll, tags: { extension:mll, file:src/hopix/hopixLexer.mll, lexer, ocaml, ocamllex, package(str), package(unix), quiet, traverse }
+/usr/bin/ocamllex -q src/hopix/hopixLexer.mll # cached
+# Target: src/hopix/hopixLexer.ml.depends, tags: { extension:ml, file:src/hopix/hopixLexer.ml, ocaml, ocamldep, package(str), package(unix), quiet, traverse }
+ocamlfind ocamldep -package unix -package str -modules src/hopix/hopixLexer.ml > src/hopix/hopixLexer.ml.depends # cached
+# Target: src/hopix/hopixParser.mly.depends, tags: { extension:mly, file:src/hopix/hopixParser.mly, menhir_ocamldep, ocaml, ocamldep, package(str), package(unix), quiet, traverse }
+menhir --raw-depend --ocamldep 'ocamlfind ocamldep -modules' src/hopix/hopixParser.mly > src/hopix/hopixParser.mly.depends
+# Target: src/hopix/hopixParser.mly, tags: { byte, compile, extension:mly, file:src/hopix/hopixParser.mly, menhir, ocaml, package(str), package(unix), parser, quiet, traverse }
+menhir --ocamlc 'ocamlfind ocamlc -annot -bin-annot -package unix -package str -I src/hopix -I src -I src/utilities -I src/common -I src/lib/pprint' --explain --infer src/hopix/hopixParser.mly
++ menhir --ocamlc 'ocamlfind ocamlc -annot -bin-annot -package unix -package str -I src/hopix -I src -I src/utilities -I src/common -I src/lib/pprint' --explain --infer src/hopix/hopixParser.mly
+File "src/hopix/hopixParser.mly", line 37, characters 0-7:
+Error: This expression has type unit but an expression was expected of type
+         HopixAST.definition Position.located
+Command exited with code 1.
+# Compilation unsuccessful.

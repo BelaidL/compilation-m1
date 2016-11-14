@@ -1,0 +1,1034 @@
+"src/options.ml" 5 29 33 "src/options.ml" 5 29 51
+type(
+  string -> string -> (unit -> string) * (string -> unit) * (unit -> bool)
+)
+ident(
+  def make_string_option "src/options.ml" 19 399 399 "src/options.ml" 1 0 -1
+)
+"src/options.ml" 5 29 52 "src/options.ml" 5 29 56
+type(
+  string
+)
+ident(
+  def what "src/options.ml" 5 29 57 "src/options.ml" 17 379 397
+)
+"src/options.ml" 5 29 57 "src/options.ml" 5 29 61
+type(
+  string
+)
+ident(
+  def kind "src/options.ml" 6 64 66 "src/options.ml" 17 379 397
+)
+"src/options.ml" 6 64 70 "src/options.ml" 6 64 78
+type(
+  string ref
+)
+ident(
+  def language "src/options.ml" 7 91 93 "src/options.ml" 17 379 397
+)
+"src/options.ml" 6 64 81 "src/options.ml" 6 64 84
+type(
+  string -> string ref
+)
+ident(
+  ext_ref Pervasives.ref
+)
+"src/options.ml" 6 64 85 "src/options.ml" 6 64 87
+type(
+  string
+)
+"src/options.ml" 6 64 81 "src/options.ml" 6 64 87
+type(
+  string ref
+)
+"src/options.ml" 7 91 97 "src/options.ml" 7 91 100
+type(
+  unit -> string
+)
+ident(
+  def get "src/options.ml" 15 311 313 "src/options.ml" 17 379 397
+)
+"src/options.ml" 7 91 101 "src/options.ml" 7 91 103
+type(
+  unit
+)
+"src/options.ml" 8 106 113 "src/options.ml" 8 106 114
+type(
+  string ref -> string
+)
+ident(
+  ext_ref Pervasives.( ! )
+)
+"src/options.ml" 8 106 114 "src/options.ml" 8 106 122
+type(
+  string ref
+)
+ident(
+  int_ref language "src/options.ml" 6 64 70 "src/options.ml" 6 64 78
+)
+"src/options.ml" 8 106 113 "src/options.ml" 8 106 122
+type(
+  string
+)
+"src/options.ml" 8 106 123 "src/options.ml" 8 106 124
+type(
+  string -> string -> bool
+)
+ident(
+  ext_ref Pervasives.( = )
+)
+"src/options.ml" 8 106 125 "src/options.ml" 8 106 127
+type(
+  string
+)
+"src/options.ml" 8 106 113 "src/options.ml" 8 106 127
+type(
+  bool
+)
+"src/options.ml" 9 133 139 "src/options.ml" 9 133 157
+type(
+  string -> string -> unit
+)
+ident(
+  ext_ref Error.global_error
+)
+"src/options.ml" 10 158 166 "src/options.ml" 10 158 194
+type(
+  string
+)
+"src/options.ml" 11 195 204 "src/options.ml" 11 195 218
+type(
+  (string -> string -> string -> string, unit, string) format ->
+  string -> string -> string -> string
+)
+ident(
+  ext_ref Printf.sprintf
+)
+"src/options.ml" 11 195 219 "src/options.ml" 11 195 263
+type(
+  (string -> string -> string -> string, unit, string) format
+)
+"src/options.ml" 12 264 275 "src/options.ml" 12 264 279
+type(
+  string
+)
+ident(
+  int_ref kind "src/options.ml" 5 29 57 "src/options.ml" 5 29 61
+)
+"src/options.ml" 12 264 280 "src/options.ml" 12 264 284
+type(
+  string
+)
+ident(
+  int_ref what "src/options.ml" 5 29 52 "src/options.ml" 5 29 56
+)
+"src/options.ml" 12 264 285 "src/options.ml" 12 264 289
+type(
+  string
+)
+ident(
+  int_ref kind "src/options.ml" 5 29 57 "src/options.ml" 5 29 61
+)
+"src/options.ml" 11 195 203 "src/options.ml" 12 264 290
+call(
+  stack
+)
+type(
+  string
+)
+"src/options.ml" 9 133 139 "src/options.ml" 12 264 290
+call(
+  stack
+)
+type(
+  unit
+)
+"src/options.ml" 8 106 110 "src/options.ml" 12 264 290
+type(
+  unit
+)
+"src/options.ml" 13 292 296 "src/options.ml" 13 292 297
+type(
+  string ref -> string
+)
+ident(
+  ext_ref Pervasives.( ! )
+)
+"src/options.ml" 13 292 297 "src/options.ml" 13 292 305
+type(
+  string ref
+)
+ident(
+  int_ref language "src/options.ml" 6 64 70 "src/options.ml" 6 64 78
+)
+"src/options.ml" 13 292 296 "src/options.ml" 13 292 305
+type(
+  string
+)
+"src/options.ml" 8 106 110 "src/options.ml" 13 292 305
+type(
+  string
+)
+"src/options.ml" 15 311 317 "src/options.ml" 15 311 320
+type(
+  string -> unit
+)
+ident(
+  def set "src/options.ml" 16 342 344 "src/options.ml" 17 379 397
+)
+"src/options.ml" 15 311 323 "src/options.ml" 15 311 329
+type(
+  string ref -> string -> unit
+)
+ident(
+  ext_ref Pervasives.( := )
+)
+"src/options.ml" 15 311 330 "src/options.ml" 15 311 338
+type(
+  string ref
+)
+ident(
+  int_ref language "src/options.ml" 6 64 70 "src/options.ml" 6 64 78
+)
+"src/options.ml" 15 311 323 "src/options.ml" 15 311 338
+call(
+  stack
+)
+type(
+  string -> unit
+)
+"src/options.ml" 16 342 348 "src/options.ml" 16 342 354
+type(
+  unit -> bool
+)
+ident(
+  def is_set "src/options.ml" 17 379 381 "src/options.ml" 17 379 397
+)
+"src/options.ml" 16 342 355 "src/options.ml" 16 342 357
+type(
+  unit
+)
+"src/options.ml" 16 342 360 "src/options.ml" 16 342 361
+type(
+  string ref -> string
+)
+ident(
+  ext_ref Pervasives.( ! )
+)
+"src/options.ml" 16 342 361 "src/options.ml" 16 342 369
+type(
+  string ref
+)
+ident(
+  int_ref language "src/options.ml" 6 64 70 "src/options.ml" 6 64 78
+)
+"src/options.ml" 16 342 360 "src/options.ml" 16 342 369
+type(
+  string
+)
+"src/options.ml" 16 342 370 "src/options.ml" 16 342 372
+type(
+  string -> string -> bool
+)
+ident(
+  ext_ref Pervasives.( <> )
+)
+"src/options.ml" 16 342 373 "src/options.ml" 16 342 375
+type(
+  string
+)
+"src/options.ml" 16 342 360 "src/options.ml" 16 342 375
+type(
+  bool
+)
+"src/options.ml" 17 379 381 "src/options.ml" 17 379 384
+type(
+  unit -> string
+)
+ident(
+  int_ref get "src/options.ml" 7 91 97 "src/options.ml" 7 91 100
+)
+"src/options.ml" 17 379 386 "src/options.ml" 17 379 389
+type(
+  string -> unit
+)
+ident(
+  int_ref set "src/options.ml" 15 311 317 "src/options.ml" 15 311 320
+)
+"src/options.ml" 17 379 391 "src/options.ml" 17 379 397
+type(
+  unit -> bool
+)
+ident(
+  int_ref is_set "src/options.ml" 16 342 348 "src/options.ml" 16 342 354
+)
+"src/options.ml" 17 379 381 "src/options.ml" 17 379 397
+type(
+  (unit -> string) * (string -> unit) * (unit -> bool)
+)
+"src/options.ml" 16 342 344 "src/options.ml" 17 379 397
+type(
+  (unit -> string) * (string -> unit) * (unit -> bool)
+)
+"src/options.ml" 15 311 313 "src/options.ml" 17 379 397
+type(
+  (unit -> string) * (string -> unit) * (unit -> bool)
+)
+"src/options.ml" 7 91 93 "src/options.ml" 17 379 397
+type(
+  (unit -> string) * (string -> unit) * (unit -> bool)
+)
+"src/options.ml" 6 64 66 "src/options.ml" 17 379 397
+type(
+  (unit -> string) * (string -> unit) * (unit -> bool)
+)
+"src/options.ml" 19 399 404 "src/options.ml" 19 399 423
+type(
+  unit -> string
+)
+ident(
+  def get_source_language "src/options.ml" 22 514 514 "src/options.ml" 1 0 -1
+)
+"src/options.ml" 19 399 425 "src/options.ml" 19 399 444
+type(
+  string -> unit
+)
+ident(
+  def set_source_language "src/options.ml" 22 514 514 "src/options.ml" 1 0 -1
+)
+"src/options.ml" 19 399 446 "src/options.ml" 19 399 468
+type(
+  unit -> bool
+)
+ident(
+  def is_source_language_set "src/options.ml" 22 514 514 "src/options.ml" 1 0 -1
+)
+"src/options.ml" 19 399 403 "src/options.ml" 19 399 469
+type(
+  (unit -> string) * (string -> unit) * (unit -> bool)
+)
+"src/options.ml" 20 472 474 "src/options.ml" 20 472 492
+type(
+  string -> string -> (unit -> string) * (string -> unit) * (unit -> bool)
+)
+ident(
+  int_ref make_string_option "src/options.ml" 5 29 33 "src/options.ml" 5 29 51
+)
+"src/options.ml" 20 472 493 "src/options.ml" 20 472 503
+type(
+  string
+)
+"src/options.ml" 20 472 504 "src/options.ml" 20 472 512
+type(
+  string
+)
+"src/options.ml" 20 472 474 "src/options.ml" 20 472 512
+call(
+  stack
+)
+type(
+  (unit -> string) * (string -> unit) * (unit -> bool)
+)
+"src/options.ml" 22 514 519 "src/options.ml" 22 514 538
+type(
+  unit -> string
+)
+ident(
+  def get_target_language "src/options.ml" 25 629 629 "src/options.ml" 1 0 -1
+)
+"src/options.ml" 22 514 540 "src/options.ml" 22 514 559
+type(
+  string -> unit
+)
+ident(
+  def set_target_language "src/options.ml" 25 629 629 "src/options.ml" 1 0 -1
+)
+"src/options.ml" 22 514 561 "src/options.ml" 22 514 583
+type(
+  unit -> bool
+)
+ident(
+  def is_target_language_set "src/options.ml" 25 629 629 "src/options.ml" 1 0 -1
+)
+"src/options.ml" 22 514 518 "src/options.ml" 22 514 584
+type(
+  (unit -> string) * (string -> unit) * (unit -> bool)
+)
+"src/options.ml" 23 587 589 "src/options.ml" 23 587 607
+type(
+  string -> string -> (unit -> string) * (string -> unit) * (unit -> bool)
+)
+ident(
+  int_ref make_string_option "src/options.ml" 5 29 33 "src/options.ml" 5 29 51
+)
+"src/options.ml" 23 587 608 "src/options.ml" 23 587 618
+type(
+  string
+)
+"src/options.ml" 23 587 619 "src/options.ml" 23 587 627
+type(
+  string
+)
+"src/options.ml" 23 587 589 "src/options.ml" 23 587 627
+call(
+  stack
+)
+type(
+  (unit -> string) * (string -> unit) * (unit -> bool)
+)
+"src/options.ml" 27 662 666 "src/options.ml" 27 662 670
+type(
+  mode ref
+)
+ident(
+  def mode "src/options.ml" 29 684 684 "src/options.ml" 1 0 -1
+)
+"src/options.ml" 27 662 673 "src/options.ml" 27 662 676
+type(
+  mode -> mode ref
+)
+ident(
+  ext_ref Pervasives.ref
+)
+"src/options.ml" 27 662 677 "src/options.ml" 27 662 682
+type(
+  mode
+)
+"src/options.ml" 27 662 673 "src/options.ml" 27 662 682
+type(
+  mode ref
+)
+"src/options.ml" 29 684 688 "src/options.ml" 29 684 696
+type(
+  mode -> unit
+)
+ident(
+  def set_mode "src/options.ml" 31 712 712 "src/options.ml" 1 0 -1
+)
+"src/options.ml" 29 684 699 "src/options.ml" 29 684 705
+type(
+  mode ref -> mode -> unit
+)
+ident(
+  ext_ref Pervasives.( := )
+)
+"src/options.ml" 29 684 706 "src/options.ml" 29 684 710
+type(
+  mode ref
+)
+ident(
+  int_ref mode "src/options.ml" 27 662 666 "src/options.ml" 27 662 670
+)
+"src/options.ml" 29 684 699 "src/options.ml" 29 684 710
+call(
+  stack
+)
+type(
+  mode -> unit
+)
+"src/options.ml" 31 712 716 "src/options.ml" 31 712 724
+type(
+  unit -> mode
+)
+ident(
+  def get_mode "src/options.ml" 33 737 737 "src/options.ml" 1 0 -1
+)
+"src/options.ml" 31 712 725 "src/options.ml" 31 712 727
+type(
+  unit
+)
+"src/options.ml" 31 712 730 "src/options.ml" 31 712 731
+type(
+  mode ref -> mode
+)
+ident(
+  ext_ref Pervasives.( ! )
+)
+"src/options.ml" 31 712 731 "src/options.ml" 31 712 735
+type(
+  mode ref
+)
+ident(
+  int_ref mode "src/options.ml" 27 662 666 "src/options.ml" 27 662 670
+)
+"src/options.ml" 31 712 730 "src/options.ml" 31 712 735
+type(
+  mode
+)
+"src/options.ml" 33 737 742 "src/options.ml" 33 737 760
+type(
+  unit -> string
+)
+ident(
+  def get_input_filename "src/options.ml" 36 848 848 "src/options.ml" 1 0 -1
+)
+"src/options.ml" 33 737 762 "src/options.ml" 33 737 780
+type(
+  string -> unit
+)
+ident(
+  def set_input_filename "src/options.ml" 36 848 848 "src/options.ml" 1 0 -1
+)
+"src/options.ml" 33 737 782 "src/options.ml" 33 737 803
+type(
+  unit -> bool
+)
+ident(
+  def is_input_filename_set "src/options.ml" 36 848 848 "src/options.ml" 1 0 -1
+)
+"src/options.ml" 33 737 741 "src/options.ml" 33 737 804
+type(
+  (unit -> string) * (string -> unit) * (unit -> bool)
+)
+"src/options.ml" 34 807 809 "src/options.ml" 34 807 827
+type(
+  string -> string -> (unit -> string) * (string -> unit) * (unit -> bool)
+)
+ident(
+  int_ref make_string_option "src/options.ml" 5 29 33 "src/options.ml" 5 29 51
+)
+"src/options.ml" 34 807 828 "src/options.ml" 34 807 838
+type(
+  string
+)
+"src/options.ml" 34 807 839 "src/options.ml" 34 807 846
+type(
+  string
+)
+"src/options.ml" 34 807 809 "src/options.ml" 34 807 846
+call(
+  stack
+)
+type(
+  (unit -> string) * (string -> unit) * (unit -> bool)
+)
+"src/options.ml" 36 848 852 "src/options.ml" 36 848 857
+type(
+  string list ref
+)
+ident(
+  def using "src/options.ml" 37 885 885 "src/options.ml" 1 0 -1
+)
+"src/options.ml" 36 848 878 "src/options.ml" 36 848 881
+type(
+  string list -> string list ref
+)
+ident(
+  ext_ref Pervasives.ref
+)
+"src/options.ml" 36 848 882 "src/options.ml" 36 848 884
+type(
+  string list
+)
+"src/options.ml" 36 848 878 "src/options.ml" 36 848 884
+type(
+  string list ref
+)
+type(
+  string list ref
+)
+"src/options.ml" 37 885 889 "src/options.ml" 37 885 901
+type(
+  string -> unit
+)
+ident(
+  def insert_using "src/options.ml" 38 927 927 "src/options.ml" 1 0 -1
+)
+"src/options.ml" 37 885 902 "src/options.ml" 37 885 903
+type(
+  string
+)
+ident(
+  def x "src/options.ml" 37 885 906 "src/options.ml" 37 885 926
+)
+"src/options.ml" 37 885 906 "src/options.ml" 37 885 911
+type(
+  string list ref
+)
+ident(
+  int_ref using "src/options.ml" 36 848 852 "src/options.ml" 36 848 857
+)
+"src/options.ml" 37 885 912 "src/options.ml" 37 885 914
+type(
+  string list ref -> string list -> unit
+)
+ident(
+  ext_ref Pervasives.( := )
+)
+"src/options.ml" 37 885 915 "src/options.ml" 37 885 916
+type(
+  string
+)
+ident(
+  int_ref x "src/options.ml" 37 885 902 "src/options.ml" 37 885 903
+)
+"src/options.ml" 37 885 920 "src/options.ml" 37 885 921
+type(
+  string list ref -> string list
+)
+ident(
+  ext_ref Pervasives.( ! )
+)
+"src/options.ml" 37 885 921 "src/options.ml" 37 885 926
+type(
+  string list ref
+)
+ident(
+  int_ref using "src/options.ml" 36 848 852 "src/options.ml" 36 848 857
+)
+"src/options.ml" 37 885 920 "src/options.ml" 37 885 926
+type(
+  string list
+)
+"src/options.ml" 37 885 915 "src/options.ml" 37 885 926
+type(
+  string list
+)
+"src/options.ml" 37 885 906 "src/options.ml" 37 885 926
+type(
+  unit
+)
+"src/options.ml" 38 927 931 "src/options.ml" 38 927 940
+type(
+  unit -> string list
+)
+ident(
+  def get_using "src/options.ml" 40 954 954 "src/options.ml" 1 0 -1
+)
+"src/options.ml" 38 927 941 "src/options.ml" 38 927 943
+type(
+  unit
+)
+"src/options.ml" 38 927 946 "src/options.ml" 38 927 947
+type(
+  string list ref -> string list
+)
+ident(
+  ext_ref Pervasives.( ! )
+)
+"src/options.ml" 38 927 947 "src/options.ml" 38 927 952
+type(
+  string list ref
+)
+ident(
+  int_ref using "src/options.ml" 36 848 852 "src/options.ml" 36 848 857
+)
+"src/options.ml" 38 927 946 "src/options.ml" 38 927 952
+type(
+  string list
+)
+"src/options.ml" 40 954 958 "src/options.ml" 40 954 978
+type(
+  bool -> unit
+)
+ident(
+  def set_interactive_mode "src/options.ml" 44 1052 1052 "src/options.ml" 1 0 -1
+)
+"src/options.ml" 41 990 994 "src/options.ml" 41 990 998
+type(
+  bool
+)
+"src/options.ml" 41 990 1002 "src/options.ml" 41 990 1010
+type(
+  mode -> unit
+)
+ident(
+  int_ref set_mode "src/options.ml" 29 684 688 "src/options.ml" 29 684 696
+)
+"src/options.ml" 41 990 1011 "src/options.ml" 41 990 1022
+type(
+  mode
+)
+"src/options.ml" 41 990 1002 "src/options.ml" 41 990 1022
+call(
+  tail
+)
+type(
+  unit
+)
+"src/options.ml" 42 1023 1027 "src/options.ml" 42 1023 1032
+type(
+  bool
+)
+"src/options.ml" 42 1023 1036 "src/options.ml" 42 1023 1044
+type(
+  mode -> unit
+)
+ident(
+  int_ref set_mode "src/options.ml" 29 684 688 "src/options.ml" 29 684 696
+)
+"src/options.ml" 42 1023 1045 "src/options.ml" 42 1023 1050
+type(
+  mode
+)
+"src/options.ml" 42 1023 1036 "src/options.ml" 42 1023 1050
+call(
+  tail
+)
+type(
+  unit
+)
+"src/options.ml" 40 954 981 "src/options.ml" 42 1023 1050
+type(
+  bool -> unit
+)
+"src/options.ml" 44 1052 1056 "src/options.ml" 44 1052 1072
+type(
+  bool -> unit
+)
+ident(
+  def set_running_mode "src/options.ml" 45 1116 1116 "src/options.ml" 1 0 -1
+)
+"src/options.ml" 44 1052 1074 "src/options.ml" 44 1052 1090
+type(
+  unit -> bool
+)
+ident(
+  def get_running_mode "src/options.ml" 45 1116 1116 "src/options.ml" 1 0 -1
+)
+"src/options.ml" 44 1052 1056 "src/options.ml" 44 1052 1090
+type(
+  (bool -> unit) * (unit -> bool)
+)
+"src/options.ml" 44 1052 1093 "src/options.ml" 44 1052 1109
+type(
+  bool -> (bool -> unit) * (unit -> bool)
+)
+ident(
+  ext_ref ExtStd.Ref.as_functions
+)
+"src/options.ml" 44 1052 1110 "src/options.ml" 44 1052 1115
+type(
+  bool
+)
+"src/options.ml" 44 1052 1093 "src/options.ml" 44 1052 1115
+call(
+  stack
+)
+type(
+  (bool -> unit) * (unit -> bool)
+)
+"src/options.ml" 45 1116 1120 "src/options.ml" 45 1116 1136
+type(
+  bool -> unit
+)
+ident(
+  def set_verbose_mode "src/options.ml" 46 1180 1180 "src/options.ml" 1 0 -1
+)
+"src/options.ml" 45 1116 1138 "src/options.ml" 45 1116 1154
+type(
+  unit -> bool
+)
+ident(
+  def get_verbose_mode "src/options.ml" 46 1180 1180 "src/options.ml" 1 0 -1
+)
+"src/options.ml" 45 1116 1120 "src/options.ml" 45 1116 1154
+type(
+  (bool -> unit) * (unit -> bool)
+)
+"src/options.ml" 45 1116 1157 "src/options.ml" 45 1116 1173
+type(
+  bool -> (bool -> unit) * (unit -> bool)
+)
+ident(
+  ext_ref ExtStd.Ref.as_functions
+)
+"src/options.ml" 45 1116 1174 "src/options.ml" 45 1116 1179
+type(
+  bool
+)
+"src/options.ml" 45 1116 1157 "src/options.ml" 45 1116 1179
+call(
+  stack
+)
+type(
+  (bool -> unit) * (unit -> bool)
+)
+"src/options.ml" 46 1180 1184 "src/options.ml" 46 1180 1196
+type(
+  bool -> unit
+)
+ident(
+  def set_dry_mode "src/options.ml" 47 1244 1244 "src/options.ml" 1 0 -1
+)
+"src/options.ml" 46 1180 1198 "src/options.ml" 46 1180 1210
+type(
+  unit -> bool
+)
+ident(
+  def get_dry_mode "src/options.ml" 47 1244 1244 "src/options.ml" 1 0 -1
+)
+"src/options.ml" 46 1180 1184 "src/options.ml" 46 1180 1210
+type(
+  (bool -> unit) * (unit -> bool)
+)
+"src/options.ml" 46 1180 1221 "src/options.ml" 46 1180 1237
+type(
+  bool -> (bool -> unit) * (unit -> bool)
+)
+ident(
+  ext_ref ExtStd.Ref.as_functions
+)
+"src/options.ml" 46 1180 1238 "src/options.ml" 46 1180 1243
+type(
+  bool
+)
+"src/options.ml" 46 1180 1221 "src/options.ml" 46 1180 1243
+call(
+  stack
+)
+type(
+  (bool -> unit) * (unit -> bool)
+)
+"src/options.ml" 47 1244 1248 "src/options.ml" 47 1244 1261
+type(
+  bool -> unit
+)
+ident(
+  def set_benchmark "src/options.ml" 48 1308 1308 "src/options.ml" 1 0 -1
+)
+"src/options.ml" 47 1244 1263 "src/options.ml" 47 1244 1276
+type(
+  unit -> bool
+)
+ident(
+  def get_benchmark "src/options.ml" 48 1308 1308 "src/options.ml" 1 0 -1
+)
+"src/options.ml" 47 1244 1248 "src/options.ml" 47 1244 1276
+type(
+  (bool -> unit) * (unit -> bool)
+)
+"src/options.ml" 47 1244 1285 "src/options.ml" 47 1244 1301
+type(
+  bool -> (bool -> unit) * (unit -> bool)
+)
+ident(
+  ext_ref ExtStd.Ref.as_functions
+)
+"src/options.ml" 47 1244 1302 "src/options.ml" 47 1244 1307
+type(
+  bool
+)
+"src/options.ml" 47 1244 1285 "src/options.ml" 47 1244 1307
+call(
+  stack
+)
+type(
+  (bool -> unit) * (unit -> bool)
+)
+"src/options.ml" 48 1308 1312 "src/options.ml" 48 1308 1322
+type(
+  bool -> unit
+)
+ident(
+  def set_unsafe "src/options.ml" 49 1372 1372 "src/options.ml" 1 0 -1
+)
+"src/options.ml" 48 1308 1324 "src/options.ml" 48 1308 1334
+type(
+  unit -> bool
+)
+ident(
+  def get_unsafe "src/options.ml" 49 1372 1372 "src/options.ml" 1 0 -1
+)
+"src/options.ml" 48 1308 1312 "src/options.ml" 48 1308 1334
+type(
+  (bool -> unit) * (unit -> bool)
+)
+"src/options.ml" 48 1308 1349 "src/options.ml" 48 1308 1365
+type(
+  bool -> (bool -> unit) * (unit -> bool)
+)
+ident(
+  ext_ref ExtStd.Ref.as_functions
+)
+"src/options.ml" 48 1308 1366 "src/options.ml" 48 1308 1371
+type(
+  bool
+)
+"src/options.ml" 48 1308 1349 "src/options.ml" 48 1308 1371
+call(
+  stack
+)
+type(
+  (bool -> unit) * (unit -> bool)
+)
+"src/options.ml" 49 1372 1376 "src/options.ml" 49 1372 1383
+type(
+  bool -> unit
+)
+ident(
+  def set_gcc "src/options.ml" 50 1426 1426 "src/options.ml" 1 0 -1
+)
+"src/options.ml" 49 1372 1385 "src/options.ml" 49 1372 1392
+type(
+  unit -> bool
+)
+ident(
+  def get_gcc "src/options.ml" 50 1426 1426 "src/options.ml" 1 0 -1
+)
+"src/options.ml" 49 1372 1376 "src/options.ml" 49 1372 1392
+type(
+  (bool -> unit) * (unit -> bool)
+)
+"src/options.ml" 49 1372 1403 "src/options.ml" 49 1372 1419
+type(
+  bool -> (bool -> unit) * (unit -> bool)
+)
+ident(
+  ext_ref ExtStd.Ref.as_functions
+)
+"src/options.ml" 49 1372 1420 "src/options.ml" 49 1372 1425
+type(
+  bool
+)
+"src/options.ml" 49 1372 1403 "src/options.ml" 49 1372 1425
+call(
+  stack
+)
+type(
+  (bool -> unit) * (unit -> bool)
+)
+"src/options.ml" 50 1426 1430 "src/options.ml" 50 1426 1444
+type(
+  bool -> unit
+)
+ident(
+  def set_show_types "src/options.ml" 51 1490 1490 "src/options.ml" 1 0 -1
+)
+"src/options.ml" 50 1426 1446 "src/options.ml" 50 1426 1460
+type(
+  unit -> bool
+)
+ident(
+  def get_show_types "src/options.ml" 51 1490 1490 "src/options.ml" 1 0 -1
+)
+"src/options.ml" 50 1426 1430 "src/options.ml" 50 1426 1460
+type(
+  (bool -> unit) * (unit -> bool)
+)
+"src/options.ml" 50 1426 1467 "src/options.ml" 50 1426 1483
+type(
+  bool -> (bool -> unit) * (unit -> bool)
+)
+ident(
+  ext_ref ExtStd.Ref.as_functions
+)
+"src/options.ml" 50 1426 1484 "src/options.ml" 50 1426 1489
+type(
+  bool
+)
+"src/options.ml" 50 1426 1467 "src/options.ml" 50 1426 1489
+call(
+  stack
+)
+type(
+  (bool -> unit) * (unit -> bool)
+)
+"src/options.ml" 51 1490 1494 "src/options.ml" 51 1490 1509
+type(
+  bool -> unit
+)
+ident(
+  def set_infer_types "src/options.ml" 52 1554 1554 "src/options.ml" 1 0 -1
+)
+"src/options.ml" 51 1490 1511 "src/options.ml" 51 1490 1526
+type(
+  unit -> bool
+)
+ident(
+  def get_infer_types "src/options.ml" 52 1554 1554 "src/options.ml" 1 0 -1
+)
+"src/options.ml" 51 1490 1494 "src/options.ml" 51 1490 1526
+type(
+  (bool -> unit) * (unit -> bool)
+)
+"src/options.ml" 51 1490 1531 "src/options.ml" 51 1490 1547
+type(
+  bool -> (bool -> unit) * (unit -> bool)
+)
+ident(
+  ext_ref ExtStd.Ref.as_functions
+)
+"src/options.ml" 51 1490 1548 "src/options.ml" 51 1490 1553
+type(
+  bool
+)
+"src/options.ml" 51 1490 1531 "src/options.ml" 51 1490 1553
+call(
+  stack
+)
+type(
+  (bool -> unit) * (unit -> bool)
+)
+"src/options.ml" 52 1554 1558 "src/options.ml" 52 1554 1573
+type(
+  bool -> unit
+)
+ident(
+  def set_check_types "src/options.ml" 53 1617 1617 "src/options.ml" 1 0 -1
+)
+"src/options.ml" 52 1554 1575 "src/options.ml" 52 1554 1590
+type(
+  unit -> bool
+)
+ident(
+  def get_check_types "src/options.ml" 53 1617 1617 "src/options.ml" 1 0 -1
+)
+"src/options.ml" 52 1554 1558 "src/options.ml" 52 1554 1590
+type(
+  (bool -> unit) * (unit -> bool)
+)
+"src/options.ml" 52 1554 1595 "src/options.ml" 52 1554 1611
+type(
+  bool -> (bool -> unit) * (unit -> bool)
+)
+ident(
+  ext_ref ExtStd.Ref.as_functions
+)
+"src/options.ml" 52 1554 1612 "src/options.ml" 52 1554 1616
+type(
+  bool
+)
+"src/options.ml" 52 1554 1595 "src/options.ml" 52 1554 1616
+call(
+  stack
+)
+type(
+  (bool -> unit) * (unit -> bool)
+)
+"src/options.ml" 53 1617 1621 "src/options.ml" 53 1617 1637
+type(
+  bool -> unit
+)
+ident(
+  def set_verbose_eval "src/options.ml" 53 1617 1679 "src/options.ml" 1 0 -1
+)
+"src/options.ml" 53 1617 1639 "src/options.ml" 53 1617 1655
+type(
+  unit -> bool
+)
+ident(
+  def get_verbose_eval "src/options.ml" 53 1617 1679 "src/options.ml" 1 0 -1
+)
+"src/options.ml" 53 1617 1621 "src/options.ml" 53 1617 1655
+type(
+  (bool -> unit) * (unit -> bool)
+)
+"src/options.ml" 53 1617 1658 "src/options.ml" 53 1617 1674
+type(
+  bool -> (bool -> unit) * (unit -> bool)
+)
+ident(
+  ext_ref ExtStd.Ref.as_functions
+)
+"src/options.ml" 53 1617 1675 "src/options.ml" 53 1617 1679
+type(
+  bool
+)
+"src/options.ml" 53 1617 1658 "src/options.ml" 53 1617 1679
+call(
+  stack
+)
+type(
+  (bool -> unit) * (unit -> bool)
+)
