@@ -1,5 +1,5 @@
 %{
-  open Position
+
   open HopixAST
 
 (*TODO : solve error with located expressions?????*)
@@ -7,12 +7,11 @@
 
 %}
 %token VAL
-%token EQUAL
-%token TYPE
+%token EQUAL EXTERN FUN
+%token TYPE TYPECON TYPEVAR VARID CONSTRID
+%token COMMA COLON SEMICOLON LRARROW RLARROW LPAREN RPAREN RBRACKET LBRACKET PIPE
 %token EOF
 %token<Int32.t> INT
-%token<char> CHAR
-%token<string> STRING
 %token<string> ID
 
 %start<HopixAST.t> program
@@ -25,46 +24,59 @@ program: def=definition * EOF
 }
 
 definition:
-| TYPE t=ID
+| TYPE tc=located(TYPECON) tp=loption(separated_list(COMMA, located(TYPEVAR))) td=option(preceded(EQUAL,located(tdefinition)))
 {
-	
+	DefineType(tc,tp,td)
 }
-|TYPE t=ID EQUAL td=tdefinition
+| EXTERN vd=located(VARID) COLON ttype
 {
-	
+
 }
-| vd=vdefinition
+| vdefinition
 {
-	vd
+
 }
+
+
 
 tdefinition:
-constr_id=ID
+option(PIPE) constr_id=located(CONSTRID) loption(delimited(LPAREN, separated_noempty_list(COMMA, ttype), RPAREN)) option(tdefinition)
+{
+
+}
+
+vdefinition:
+VAL vid=located(VARID) option(preceded(COLON, ttype)) EQUAL e=located(expression)
+{
+
+}
+| FUN vid=located(VARID) ltv=loption(delimited(LBRACKET, separated_noempty_list(COMMA, located(TYPEVAR)), RBRACKET)) 
+	LPAREN p=separated_noempty_list(COMMA, located(pattern)) (*TOBECONTINUED*) 
 {
 	
 }
 
 
-vdefinition:
-VAL x=ID EQUAL e=expression
-{
-  
-}
 
 
-expression:
-x=INT
+ttype:
+| tc=located(TYPECON) loption(separated_list(COMMA,ttype))
 {
 
 }
-|x=CHAR
+| ttype LRARROW ttype
 {
 
 }
-|x=STRING
+| tv=located(TYPEVAR)
 {
 
 }
+| LPAREN ttype RPAREN
+{
+
+}
+
 (* | var_id  *)
 (* | constr_id  *)
 (* | (expression:type) *)

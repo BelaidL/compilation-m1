@@ -59,22 +59,42 @@ rule token = parse
 
 
   (** Symbols *)
-  | "="       { EQUAL }
+  | "="       { EQUAL  }
+
 
   (** Keywords *)
   | "val"           { VAL   }
   | "if"            { IF    }
   | "then"          { THEN  }
   | "else"          { ELSE  }
+  | "extern"        { EXTERN }
+  | "type"          { TYPE   }
+  | "fun"           { FUN    }
+  
 
   (** Identifiers *)
-  | type_variable as i  { Type_Var i}
+  | type_variable as i  { TYPEVAR i}
+  | type_con as i       { TYPECON i}
+  | var_id as i         { VARID i  }
+  | constr_id as i      {CONSTRID i}
 
   (** Operators *)
   | "*"       { STAR  }
   | "+"       { PLUS  }
   | "-"       { MINUS }
   | "/"       { SLASH }
+
+  (** Punctiation **)
+  | ","       { COMMA     }
+  | ":"       { COLON     }
+  | ";"       { SEMICOLON }
+  | "->"      { LRARROW   }
+  | "<-"      { RLARROW   }
+  | "("       { LPAREN    }
+  | ")"       { RPAREN    }
+  | "["       { LBRACKET  }
+  | "]"       { RBRACKET  }
+  | "|"       { PIPE      }
 
 
   | eof             { EOF       }
