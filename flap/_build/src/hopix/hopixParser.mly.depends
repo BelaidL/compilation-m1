@@ -1,2 +1,0 @@
-src/hopix/hopixParser.ml: HopixAST Int32 Lexing Position
-src/hopix/hopixParser.mli: HopixAST Int32 Lexing
