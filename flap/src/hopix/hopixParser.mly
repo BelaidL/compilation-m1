@@ -1,5 +1,4 @@
 %{
-  open Position
   open HopixAST
 
 (*TODO : solve error with located expressions?????*)
@@ -29,7 +28,7 @@ definition:
 {
 	
 }
-|TYPE t=ID EQUAL td=tdefinition
+|TYPE t=Position.located(ID) EQUAL td=Position.located(tdefinition)
 {
 	
 }
