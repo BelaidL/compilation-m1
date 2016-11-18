@@ -33,15 +33,15 @@ definition:
 {
 
 }
-| vdefinition
+| vd=located(vdefinition)
 {
-
+  vd
 }
 
 
 
 tdefinition:
-option(PIPE) constr_id=located(CONSTRID) loption(delimited(LPAREN, separated_noempty_list(COMMA, ttype), RPAREN)) option(tdefinition)
+option(PIPE) constr_id=located(CONSTRID) loption(delimited(LPAREN, separated_nonempty_list(COMMA, ttype), RPAREN)) option(tdefinition)
 {
 
 }
@@ -51,8 +51,8 @@ VAL vid=located(VARID) option(preceded(COLON, ttype)) (*EQUAL e=located(expressi
 {
 
 }
-| FUN vid=located(VARID) ltv=loption(delimited(LBRACKET, separated_noempty_list(COMMA, located(TYPEVAR)), RBRACKET)) 
-	LPAREN p=separated_noempty_list(COMMA, located(pattern)) (*TOBECONTINUED*) 
+| FUN vid=located(VARID) ltv=loption(delimited(LBRACKET, separated_nonempty_list(COMMA, located(TYPEVAR)), RBRACKET)) 
+	LPAREN p=separated_nonempty_list(COMMA, located(pattern)) (*TOBECONTINUED*) 
 {
 	
 }
@@ -92,6 +92,12 @@ ttype:
 (* | ! expression *)
 (* | while expression {expression} *)
 (* | (expression) *)
+
+pattern: 
+| x=located(CONSTRID)
+{
+
+}
 
 %inline located(X): x=X{
 	Position.with_poss $startpos $endpos x

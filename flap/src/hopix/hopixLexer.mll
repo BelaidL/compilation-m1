@@ -73,10 +73,10 @@ rule token = parse
   
 
   (** Identifiers *)
-  | type_variable as i  { TYPEVAR i}
-  | type_con as i       { TYPECON i}
-  | var_id as i         { VARID i  }
-  | constr_id as i      {CONSTRID i}
+  | type_variable as i  { TYPEVAR i }
+  | type_con as i       { TYPECON i }
+  | var_id as i         { VARID i   }
+  | constr_id as i      { CONSTRID i}
 
   (** Operators *)
   | "*"       { STAR  }
