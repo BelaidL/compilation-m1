@@ -1,6 +1,7 @@
 %{
 
   open HopixAST
+  open Position
 
 (*TODO : solve error with located expressions?????*)
 (*TODO : find how to set optional and list parameters *)
@@ -46,7 +47,7 @@ option(PIPE) constr_id=located(CONSTRID) loption(delimited(LPAREN, separated_noe
 }
 
 vdefinition:
-VAL vid=located(VARID) option(preceded(COLON, ttype)) EQUAL e=located(expression)
+VAL vid=located(VARID) option(preceded(COLON, ttype)) (*EQUAL e=located(expression)*)
 {
 
 }
@@ -91,3 +92,7 @@ ttype:
 (* | ! expression *)
 (* | while expression {expression} *)
 (* | (expression) *)
+
+%inline located(X): x=X{
+	Position.with_poss $startpos $endpos x
+}
