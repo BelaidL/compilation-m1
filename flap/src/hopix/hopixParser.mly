@@ -1,10 +1,7 @@
 %{
-
   open HopixAST
   open Position
 
-(*TODO : solve error with located expressions?????*)
-(*TODO : find how to set optional and list parameters *)
 
 %}
 %token VAL
@@ -30,6 +27,10 @@ definition:
 	DefineType(tc,tp,td)
 }
 | EXTERN vd=located(VARID) COLON ttype
+{
+
+}
+|TYPE t=located(ID) EQUAL td=located(tdefinition)
 {
 
 }
