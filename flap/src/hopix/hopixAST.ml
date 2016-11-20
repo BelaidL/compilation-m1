@@ -1,9 +1,9 @@
-(** The abstract syntax tree for hopix programs. *)
+(** The abstract syntax  tree for hopix programs. *)
 
 open Position
 
 (** A program is a list of definitions. *)
-type program = definition located list
+type program = definition located list  
 
 and definition =
   (** A type definition. *)

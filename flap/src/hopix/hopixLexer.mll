@@ -67,17 +67,18 @@ rule token = parse
 
 
   (** Symbols *)
-  | "="       { EQUAL  }
+  | "="       { EQUAL   }
+  | ":="      { CEQUAL  }
+  | "=>"      { EQUALRARROW }
 
 
   (** Keywords *)
-  | "val"           { VAL   }
-  | "if"            { IF    }
-  | "then"          { THEN  }
-  | "else"          { ELSE  }
+  | "val"           { VAL    }
   | "extern"        { EXTERN }
   | "type"          { TYPE   }
   | "fun"           { FUN    }
+  | "ref"			{ REF    }
+  | "while"			{ WHILE  }
 
   (** Identifiers *)
   | type_variable as i  { TYPEVAR i }
@@ -86,22 +87,30 @@ rule token = parse
   | constr_id as i      { CONSTRID i}
 
   (** Operators *)
-  | "*"       { STAR  }
-  | "+"       { PLUS  }
-  | "-"       { MINUS }
-  | "/"       { SLASH }
+  | "*"       { STAR         }
+  | "+"       { PLUS         }
+  | "-"       { MINUS        }
+  | "/"       { SLASH        }
+  | "&&" 	  { AND          }
+  | "||"      { DOUBLEOR     }
+  | "<="      { LOWEREQUAL   }
+  | ">="      { GREATEREQUAL }
+  | "<"       { LOWERTHAN    }
+  | ">"       { GREATERTHAN  }
 
   (** Punctiation **)
-  | ","       { COMMA     }
-  | ":"       { COLON     }
-  | ";"       { SEMICOLON }
-  | "->"      { LRARROW   }
-  | "<-"      { RLARROW   }
-  | "("       { LPAREN    }
-  | ")"       { RPAREN    }
-  | "["       { LBRACKET  }
-  | "]"       { RBRACKET  }
-  | "|"       { PIPE      }
+  | ","       { COMMA      }
+  | ":"       { COLON      }
+  | ";"       { SEMICOLON  }
+  | "->"      { LRARROW    }
+  | "<-"      { RLARROW    }
+  | "("       { LPAREN     }
+  | ")"       { RPAREN     }
+  | "["       { LBRACKET   }
+  | "]"       { RBRACKET   }
+  | "|"       { PIPE       }
+  | "!"		  { EXCLPOINT  }
+  | "_"		  { UNDERSCORE }
 
 
   | eof             { EOF       }
