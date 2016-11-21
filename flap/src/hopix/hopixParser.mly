@@ -71,7 +71,7 @@ sum_def:
 	t :: s
 }
 stype:
-| LPAREN t=located(ttype)
+| LPAREN t=located(ttype) 
 {
 	t
 }
@@ -87,12 +87,13 @@ vdefinition:
 {
 	DefineValue(x, e)
 }
+(*TODO definition de fonction *)
 
 ttype:
 | t=type_constructeur LPAREN s=located(ttype)* RPAREN
 {
 	TyCon(t,s)
-}
+}	
 | LPAREN t=ttype RPAREN
 {
 	t
