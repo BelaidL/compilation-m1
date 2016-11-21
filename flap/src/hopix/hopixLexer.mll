@@ -99,18 +99,19 @@ rule token = parse
   | ">"       { GREATERTHAN  }
 
   (** Punctiation **)
-  | ","       { COMMA      }
-  | ":"       { COLON      }
-  | ";"       { SEMICOLON  }
-  | "->"      { LRARROW    }
-  | "<-"      { RLARROW    }
-  | "("       { LPAREN     }
-  | ")"       { RPAREN     }
-  | "["       { LBRACKET   }
-  | "]"       { RBRACKET   }
-  | "|"       { PIPE       }
-  | "!"		  { EXCLPOINT  }
-  | "_"		  { UNDERSCORE }
+  | ","       { COMMA        }
+  | ":"       { COLON        }
+  | ";"       { SEMICOLON    }
+  | "->"      { LRARROW      }
+  | "<-"      { RLARROW      }
+  | "("       { LPAREN       }
+  | ")"       { RPAREN       }
+  | "["       { LBRACKET     }
+  | "]"       { RBRACKET     }
+  | "|"       { PIPE         }
+  | "!"		  { EXCLPOINT    }
+  | "_"		  { UNDERSCORE   }
+  | "?"       { QUESTIONMARK }
 
 
   | eof             { EOF       }
