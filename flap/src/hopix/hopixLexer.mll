@@ -92,7 +92,7 @@ rule token = parse
   | "-"       { MINUS        }
   | "/"       { SLASH        }
   | "&&" 	  { AND          }
-  | "||"      { DOUBLEOR     }
+  | "||"      { OR     }
   | "<="      { LOWEREQUAL   }
   | ">="      { GREATEREQUAL }
   | "<"       { LOWERTHAN    }
