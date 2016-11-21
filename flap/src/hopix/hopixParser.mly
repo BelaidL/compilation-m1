@@ -1,6 +1,7 @@
 %{
   open HopixAST
   open Position
+
   (* version 1.6 *)
 
 %}
@@ -154,35 +155,53 @@ expression:
 {
 	TypeAnnotation(e,t)
 }
-(** Sequence *)
+(** Sequence *) (** todo must be recursive *)
 | e1=expression SEMICOLON e2=expression
 {
 	e1; e2
 }
+(** local def *)
+
+
+(**Application *)
+(**Anonymous function *)
+(**Binary Operation  *)
+(**Pattern Analysis *)
+| e=located(expression) QUESTIONMARK b=	branches
+{
+	Case (e,b)
+}
+(** Conditionnal *)
+(** Allocation *)
+(** Reference  *)
 | REF e=located(expression)
 {
 	Ref e
 }
-(** A reference assignment *)
+
+(** Value Affectation (Write) *)
 | e=located(expression) CEQUAL ee=located(expression)
 {
 	Write (e,ee)
 }
-(** A reference dereference *)
+
+(** Read *)
 | EXCLPOINT e=located(expression)
 {
 	Read e
 }
-(** A loop *)
+(** While loop *)
+
 | WHILE e1=located(expression) LBRACKET e2=located(expression) RBRACKET
 {
 	While (e1,e2)
 }
-(** *)
+(** Parenthesis *)
 | LPAREN e=expression RPAREN
 {
 	e
 }
+
 (** *)
 | e=located(expression) QUESTIONMARK b=	branches
 {
@@ -260,6 +279,7 @@ pattern:
 {
 	PTaggedValue (c,l)
 }
+(** TODO check why creates epsilon-cycle *)
 (** Pattern OR *)
 (*| plist = separated_nonempty_list(PIPE, located(pattern))
 {
