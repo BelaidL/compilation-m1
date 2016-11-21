@@ -1,7 +1,7 @@
 %{
   open HopixAST
   open Position
-
+  (* version 1.2 *)
 
 %}
 
@@ -83,7 +83,7 @@ stp:
 
 
 vdefinition:
-| VAL x=located(identifier) COMMA t=located(ttype) EQUAL e=located(expression)
+| VAL x=located(identifier) COLON t=located(ttype) EQUAL e=located(expression)
 {
 	DefineValue(x, e)
 }
@@ -206,7 +206,7 @@ pattern:
 | s=STRING
 {
 	LString s
-}
+}	
 | b=BOOL
 {
 	LBool b
