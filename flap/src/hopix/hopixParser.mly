@@ -210,24 +210,17 @@ pattern:
 {
 	PVariable i
 }
-<<<<<<< HEAD
-| c=constructor
+| c=located(constructor) LPAREN l=separated_nonempty_list(COMMA,located(pattern)) RPAREN 
 {
-	c
+  PTaggedValue (c,l)
 }
-| c=located(constructor) LPAREN l=separated_nonempty_list(COMMA,located(pattern)) RPAREN
-=======
+
 | UNDERSCORE
->>>>>>> 5ccc9cd72b7240284b4fff93bb5755a29a6579fe
 {
 	PWildcard
 }
-<<<<<<< HEAD
-| LPAREN p = pattern RPAREN
-=======
 (** Parenthesis *)
 | LPAREN p=pattern RPAREN
->>>>>>> 5ccc9cd72b7240284b4fff93bb5755a29a6579fe
 {
 	p
 }
