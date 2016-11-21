@@ -43,7 +43,7 @@ definition:
 
 
 tdefinition:
-| LPAREN s=sum_types+ RPAREN
+| s=sum_types+ 
 {
 	DefineSumType(s)
 }
@@ -87,7 +87,25 @@ vdefinition:
 {
 	DefineValue(x, e)
 }
-(*TODO definition de fonction *)
+| FUN x = separated_list(AND, mdle_vdefinition)
+{
+	DefineRecFuns (x)
+}
+
+
+mdle_vdefinition : 
+| var_id = located(identifier) fun_def = located(function_definition)
+{
+	(var_id,fun_def)	
+}
+
+function_definition : 
+| ltp_var = loption(delimited(LBRACKET,separated_nonempty_list(COMMA, located(type_var)), RBRACKET))
+   l_tp = delimited(LPAREN,separated_nonempty_list(COMMA, located(pattern)), RPAREN) tp = option(preceded(COLON, located(ttype)))
+  EQUAL exp = located(expression)
+{
+	FunctionDefinition (ltp_var, l_tp, exp)
+}
 
 ttype:
 | t=type_constructeur LPAREN s=located(ttype)* RPAREN
@@ -172,7 +190,7 @@ pattern:
 {
 	PVariable i
 }
-| c=located(constructor)
+| c=constructor
 {
 	c
 }
@@ -180,7 +198,7 @@ pattern:
 {
 	PTaggedValue (c,l)
 }
-| LPAREN p=located(pattern) RPAREN
+| LPAREN p = pattern RPAREN
 {
 	p
 }
