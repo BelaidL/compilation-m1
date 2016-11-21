@@ -9,7 +9,7 @@
 %token TYPE EXTERN FUN REF
 %token COMMA COLON SEMICOLON LRARROW RLARROW
 %token STAR PLUS MINUS SLASH AND OR LOWEREQUAL GREATEREQUAL LOWERTHAN  GREATERTHAN
-%token LPAREN RPAREN  RBRACKET LBRACKET PIPE EXCLPOINT
+%token LPAREN RPAREN  RBRACKET LBRACKET PIPE EXCLPOINT QUESTIONMARK
 %token WHILE
 %token EOF
 %token<Int32.t> INT
@@ -127,50 +127,68 @@ ttype:
 
 
 expression:
+(** Literals *)
 | e=located(literal)
 {
 	Literal e
 }
+(** Variables *)
 | v=located(identifier)
 {
 	Variable v
 }
+(** Construction d'une donnee etiquete **)
 | c=located(constructor) LBRACKET t=located(ttype)* RBRACKET LPAREN e=located(expression)* RPAREN
 {
 	Tagged(c,t,e)
 }
+(** Type Annotation *)
 | LPAREN e=located(expression) COLON t=located(ttype) RPAREN 
 {
 	TypeAnnotation(e,t)
+}
+(** Sequence *)
+| e1=expression SEMICOLON e2=expression
+{
+	e1; e2
 }
 | REF e=located(expression)
 {
 	Ref e
 }
+(** *)
 | e=located(expression) CEQUAL ee=located(expression)
 {
 	Write (e,ee)
 }
+(** *)
 | EXCLPOINT e=located(expression)
 {
 	Read e
 }
+(** *)
 | WHILE e1=located(expression) LBRACKET e2=located(expression) RBRACKET
 {
 	While (e1,e2)
 }
+(** *)
 | LPAREN e=expression RPAREN
 {
 	e
 }
+(** *)
+| e=located(expression) QUESTIONMARK b=	branches
+{
+	Case (e,b)
+}
 
 
 branches:
-| option(PIPE) l=separated_nonempty_list(PIPE, branch)
+| option(PIPE) l=separated_nonempty_list(PIPE, located(branch))
 {
 	l
 }
-| LBRACKET option(PIPE) l=separated_nonempty_list(PIPE, branch) RBRACKET
+| option(PIPE) l=separated_nonempty_list(PIPE, located(branch)) RBRACKET
 {
 	l
 }
@@ -182,34 +200,62 @@ branch:
 }
 
 pattern:
-| l=located(literal)
+(** Etiquette *)
+| c=located(constructor)
 {
-	PLiteral l
+	PTaggedValue (c, [])
 }
+(**Variable id*)
 | i=located(identifier)
 {
 	PVariable i
 }
+<<<<<<< HEAD
 | c=constructor
 {
 	c
 }
 | c=located(constructor) LPAREN l=separated_nonempty_list(COMMA,located(pattern)) RPAREN
+=======
+| UNDERSCORE
+>>>>>>> 5ccc9cd72b7240284b4fff93bb5755a29a6579fe
 {
-	PTaggedValue (c,l)
+	PWildcard
 }
+<<<<<<< HEAD
 | LPAREN p = pattern RPAREN
+=======
+(** Parenthesis *)
+| LPAREN p=pattern RPAREN
+>>>>>>> 5ccc9cd72b7240284b4fff93bb5755a29a6579fe
 {
 	p
 }
+(** Pattern with type*)
 | p=located(pattern) COLON t=located(ttype)
 {
 	PTypeAnnotation (p,t)
 }
-| UNDERSCORE
+(**Literal *)
+| l=located(literal)
 {
-	PWildcard
+	PLiteral l
 }
+(**Valeur etiquette *)
+| c=located(constructor) LPAREN l=separated_nonempty_list(COMMA,located(pattern)) RPAREN
+{
+	PTaggedValue (c,l)
+}
+(** Pattern OR *)
+(*| plist = separated_nonempty_list(PIPE, located(pattern))
+{
+	POr plist
+}*)
+(** Pattern AND*)
+(*| plist = separated_nonempty_list(AND, located(pattern))
+{
+	PAnd plist
+}*)
 
 
 %inline literal:
