@@ -222,7 +222,16 @@ expression:
 {
 	DefineRec (x,e)
 }
+(** application *)  (* un conflict reduce/reduce *)(*
+| e=located(expression) l_tp=loption(delimited(LBRACKET, separated_nonempty_list(COMMA,located(ttype)), RBRACKET))
+  LPAREN l_exp= separated_nonempty_list(COMMA, located(expression)) RPAREN
+{
+	Apply (e, l_tp, l_exp)
+}
+*)
 
+
+(** branches *)
 branches:
 | option(PIPE) l=separated_nonempty_list(PIPE, located(branch))
 {
