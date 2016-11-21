@@ -51,8 +51,8 @@ let atomeS = ['\000' - '\255'] | '\\' '0'['x''X']['0'-'9' 'a'-'f' 'A'-'F']['0'-'
       | "\\""b" | "\\""r"
 
 let atom = ['\000' - '\255'] | '\\' '0'['x''X']['0'-'9' 'a'-'f' 'A'-'F']['0'-'9' 'a'-'f' 'A'-'F']  
-            | '\\' '0' ['B' 'b']['0'-'1']+ | '\\' '0' ['O' 'o']['0'-'7']+ | printable | "\\""\\" | "\\""'" | "\\""n" | "\\""t"
-      | "\\""b" | "\\""r"
+            | '\\' '0' ['B' 'b']['0'-'1']+ | '\\' '0' ['O' 'o']['0'-'7']+ | printable | "\\""\\" 
+	    | "\\""'" | "\\""n" | "\\""t" | "\\""b" | "\\""r"
 
 let char = '\'' (atom | "'" | "'") '\''
 
@@ -62,13 +62,13 @@ rule token = parse
   (** Layout *)
   | newline         { next_line_and token lexbuf }
   | blank+          { token lexbuf               }
-  | "--"            { comment_line lexbuf }
-  | "{-"            { comment_block 0 lexbuf }
+  | "--"            { comment_line lexbuf        }
+  | "{-"            { comment_block 0 lexbuf     }
 
 
   (** Symbols *)
-  | "="       { EQUAL   }
-  | ":="      { CEQUAL  }
+  | "="       { EQUAL 	    }
+  | ":="      { CEQUAL      }
   | "=>"      { EQUALRARROW }
 
 
@@ -77,26 +77,28 @@ rule token = parse
   | "extern"        { EXTERN }
   | "type"          { TYPE   }
   | "fun"           { FUN    }
-  | "ref"			{ REF    }
-  | "while"			{ WHILE  }
+  | "ref"	    { REF    }
+  | "while"	    { WHILE  }
 
   (** Identifiers *)
-  | type_variable as i  { TYPEVAR i }
-  | type_con as i       { TYPECON i }
-  | var_id as i         { VARID i   }
-  | constr_id as i      { CONSTRID i}
+  | type_variable as i      { TYPEVAR  i  }
+  | type_con as i           { TYPECON  i  }
+  | var_id as i             { VARID    i  }
+  | constr_id as i          { CONSTRID i  }
+  | alien_infix_id as i     { INFIXID  i  }
 
   (** Operators *)
   | "*"       { STAR         }
   | "+"       { PLUS         }
   | "-"       { MINUS        }
   | "/"       { SLASH        }
-  | "&&" 	  { AND          }
-  | "||"      { OR     }
+  | "&&"      { AND          }
+  | "||"      { OR           }
   | "<="      { LOWEREQUAL   }
   | ">="      { GREATEREQUAL }
   | "<"       { LOWERTHAN    }
   | ">"       { GREATERTHAN  }
+  | "\\"      { ANTISLASH    }
 
   (** Punctiation **)
   | ","       { COMMA        }
@@ -109,12 +111,12 @@ rule token = parse
   | "["       { LBRACKET     }
   | "]"       { RBRACKET     }
   | "|"       { PIPE         }
-  | "!"		  { EXCLPOINT    }
-  | "_"		  { UNDERSCORE   }
+  | "!"	      { EXCLPOINT    }
+  | "_"	      { UNDERSCORE   }
   | "?"       { QUESTIONMARK }
 
 
-  | eof             { EOF       }
+  | eof       { EOF          }
 
   (** Lexing error. *)
   | _               { error lexbuf "unexpected character." }

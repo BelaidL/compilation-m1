@@ -1,14 +1,14 @@
 %{
   open HopixAST
   open Position
-  (* version 1.2 *)
+  (* version 1.6 *)
 
 %}
 
 %token VAL EQUAL CEQUAL EQUALRARROW UNDERSCORE
 %token TYPE EXTERN FUN REF
-%token COMMA COLON SEMICOLON LRARROW RLARROW
-%token STAR PLUS MINUS SLASH AND OR LOWEREQUAL GREATEREQUAL LOWERTHAN  GREATERTHAN
+%token COMMA COLON SEMICOLON LRARROW RLARROW 
+%token STAR PLUS MINUS SLASH AND OR LOWEREQUAL GREATEREQUAL LOWERTHAN  GREATERTHAN ANTISLASH
 %token LPAREN RPAREN  RBRACKET LBRACKET PIPE EXCLPOINT QUESTIONMARK
 %token WHILE
 %token EOF
@@ -16,7 +16,7 @@
 %token<char> CHAR
 %token<bool> BOOL
 %token<string> STRING
-%token<string> ID TYPECON TYPEVAR VARID CONSTRID
+%token<string> ID TYPECON TYPEVAR VARID CONSTRID INFIXID
 
 %start<HopixAST.t> program
 
@@ -81,12 +81,13 @@ stp:
 	t
 }
 
-
 vdefinition:
+(** A toplevel definition for a value. *)
 | VAL x=located(identifier) COLON t=located(ttype) EQUAL e=located(expression)
 {
 	DefineValue(x, e)
 }
+(** A toplevel definition for mutually recursive values. *)
 | FUN x = separated_list(AND, mdle_vdefinition)
 {
 	DefineRecFuns (x)
@@ -103,6 +104,12 @@ function_definition :
 | ltp_var = loption(delimited(LBRACKET,separated_nonempty_list(COMMA, located(type_var)), RBRACKET))
    l_tp = delimited(LPAREN,separated_nonempty_list(COMMA, located(pattern)), RPAREN) tp = option(preceded(COLON, located(ttype)))
   EQUAL exp = located(expression)
+{
+	FunctionDefinition (ltp_var, l_tp, exp)
+}
+| ltp_var = loption(delimited(LBRACKET,separated_nonempty_list(COMMA, located(type_var)), RBRACKET))
+   l_tp = delimited(LPAREN,separated_nonempty_list(COMMA, located(pattern)), RPAREN) tp = option(preceded(COLON, located(ttype)))
+  EQUALRARROW exp = located(expression)
 {
 	FunctionDefinition (ltp_var, l_tp, exp)
 }
@@ -156,17 +163,17 @@ expression:
 {
 	Ref e
 }
-(** *)
+(** A reference assignment *)
 | e=located(expression) CEQUAL ee=located(expression)
 {
 	Write (e,ee)
 }
-(** *)
+(** A reference dereference *)
 | EXCLPOINT e=located(expression)
 {
 	Read e
 }
-(** *)
+(** A loop *)
 | WHILE e1=located(expression) LBRACKET e2=located(expression) RBRACKET
 {
 	While (e1,e2)
@@ -181,7 +188,21 @@ expression:
 {
 	Case (e,b)
 }
-
+(** An anonymous function *)
+| ANTISLASH fun_def = function_definition
+{
+	Fun (fun_def)
+}
+(** A local definition *)
+| VAL x=located(identifier) COLON t=located(ttype) EQUAL e1=located(expression) SEMICOLON e2=located(expression)
+{
+	Define (x,e1,e2)
+}
+(** Local mutually recursive values. *)
+| FUN x = separated_list(AND, mdle_vdefinition) SEMICOLON e=located(expression)
+{
+	DefineRec (x,e)
+}
 
 branches:
 | option(PIPE) l=separated_nonempty_list(PIPE, located(branch))
@@ -268,6 +289,20 @@ pattern:
 {
 	LBool b
 }
+
+%inline binop:
+  x=INFIXID      { String.(sub x 0 (length x - 1)) }
+| PLUS           { "`+"  }
+| MINUS          { "`-"  }
+| STAR           { "`*"  }
+| SLASH          { "`/"  }
+| GREATEREQUAL   { "`>=" }
+| GREATERTHAN    { "`>"  }
+| LOWERTHAN      { "`<"  }
+| LOWEREQUAL     { "`<=" }
+| EQUAL          { "`="  }
+| OR             { "`||" }
+| AND            { "`&&" }
 
 %inline type_constructeur: ty=TYPECON
 {
