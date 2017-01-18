@@ -6,41 +6,26 @@
 
 %}
 
-%token VAL EQUAL CEQUAL EQUALRARROW UNDERSCORE
+%token VAL EQUAL CEQUAL EQUALRARROW
 %token TYPE EXTERN FUN REF
-%token COMMA COLON SEMICOLON LRARROW RLARROW 
-%token STAR PLUS MINUS SLASH AND OR LOWEREQUAL GREATEREQUAL LOWERTHAN  GREATERTHAN ANTISLASH
-%token LPAREN RPAREN  RBRACKET LBRACKET PIPE EXCLPOINT QUESTIONMARK
-%token WHILE
+%token COMMA COLON SEMICOLON RLARROW LRARROW
+%token STAR PLUS MINUS SLASH AND OR LOWEREQUAL GREATEREQUAL LOWERTHAN  GREATERTHAN 
+%token LPAREN RPAREN  RBRACKET LBRACKET PIPE
+%token WHILE ANTISLASH QUESTIONMARK EXCLPOINT UNDERSCORE
+
 %token EOF
 %token<Int32.t> INT
 %token<char> CHAR
 %token<bool> BOOL
 %token<string> STRING
-%token<string> ID TYPECON TYPEVAR VARID CONSTRID INFIXID
+%token<string> TYPEVAR VARID CONSTRID INFIXID TYPECON
 
 
 %right SEMICOLON
-%left THEN
-%left ELIF
-%left ELSE
-%left LRARROW 
-
 %left PIPE
-%left ESPER
-%nonassoc DOUBLEDOTEQUAL
-%left DOUBLEOR
-%left DOUBLEAND
 %nonassoc EQUAL
 %nonassoc LOWEREQUAL GREATEREQUAL LOWERTHAN GREATERTHAN
-%left ALIENINFIXID
-%left DOUBLEDOT
-%right RIGHTARROW
-
 %left PLUS MINUS
-%left MULTI DIVIDE
-%right REF
-%nonassoc EXCLPOINT
 %nonassoc QUESTIONMARK
 
 %start<HopixAST.t> program
@@ -177,7 +162,7 @@ stp:
 
 
 ttype:
-| t=type_constructeur LPAREN s=located(ttype)* RPAREN
+| t=type_constructeur  s=loption(delimited(LPAREN, separated_list(COMMA, located(ttype)), RPAREN))
 {
 	TyCon(t,s)
 }	
@@ -185,10 +170,10 @@ ttype:
 {
 	t
 }
-| s=ttype RLARROW ttype
+(*| t1=ttype LRARROW t2=ttype
 {
-	s
-}
+	
+}*)
 | e=type_var
 {
 	TyVar e
@@ -211,6 +196,16 @@ complex_expression:
 | VAL x=located(identifier) COLON t=located(ttype) EQUAL e1=located(expression) SEMICOLON e2=located(expression)
 {
 	Define (x,e1,e2)
+}
+(** Construction d'une donnee etiquete **)
+| c=located(constructor) e1=loption(delimited(LBRACKET, separated_nonempty_list(COMMA, located(ttype)), RBRACKET)) e2=loption(delimited(LPAREN,separated_nonempty_list(COMMA, located(expression)), RPAREN)) 
+{
+	Tagged(c,e1,e2)
+}
+(** Reference  *)
+| REF e=located(expression)
+{
+	Ref e
 }
 
 
