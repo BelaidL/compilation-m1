@@ -75,10 +75,11 @@ vdefinition:
 {
 	DefineValue(x,e)
 }
-| VAL x=located(identifier) COLON t=located(ttype) EQUAL e=located(expression)
+(*| VAL x=located(identifier) COLON ttype EQUAL e=located(expression)
 {
+	(*Typecheck??????*)
 	DefineValue(x, e)
-}
+}*)
 | FUN x = separated_list(AND, pair(located(identifier), vdeffun ))
 {
 	DefineRecFuns (x)
@@ -207,7 +208,21 @@ complex_expression:
 {
 	Ref e
 }
-
+(** Type Annotation *)
+| LPAREN e=located(expression) COLON t=located(ttype) RPAREN 
+{
+	TypeAnnotation(e,t)
+}
+| EXCLPOINT e=located(expression)
+{
+	Read e
+}
+(* SHIFT REDUCE CONFLICT
+| WHILE e1=located(expression) LBRACKET e2=located(expression) RBRACKET
+{
+	While (e1,e2)
+}
+*)
 
 simple_expression:
 (** Literals *)
