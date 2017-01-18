@@ -2,7 +2,7 @@
   open HopixAST
   open Position
 
-  (* version 1.6 *)
+  (* version 1.7 *)
 
 %}
 
@@ -19,6 +19,31 @@
 %token<string> STRING
 %token<string> ID TYPECON TYPEVAR VARID CONSTRID INFIXID
 
+
+%right SEMICOLON
+%left THEN
+%left ELIF
+%left ELSE
+%left EQUALRIGHTARROW 
+
+%left  VIANEL
+%left VERTICALBAR
+%left ESPER
+%nonassoc DOUBLEDOTEQUAL
+%left DOUBLEOR
+%left DOUBLEAND
+%nonassoc EQUAL
+%nonassoc LOWEREQUAL GREATEREQUAL LOWERTHAN GREATERTHAN
+%left ALIENINFIXID
+%left DOUBLEDOT
+%right RIGHTARROW
+
+%left PLUS MINUS
+%left MULTI DIVIDE
+%right REF
+%nonassoc QUESTIONDOT
+%nonassoc EXCLAMDOT
+
 %start<HopixAST.t> program
 
 %%
@@ -29,9 +54,21 @@ program: def=located(definition) * EOF
 }
 
 definition:
-| TYPE tc=located(type_constructeur) tp=loption(delimited(LBRACKET , separated_nonempty_list(COMMA, located(type_var)), RBRACKET)) EQUAL ? td =tdefinition
+| TYPE x=located(type_constructeur)
 {
-	DefineType(tc,tp,td)
+	DefineType( x, [], HopixAST.Abstract )
+}
+| TYPE tc=located(type_constructeur) ltv=delimited(LPAREN,separated_nonempty_list(COMMA,located(type_var)), RPAREN)
+{
+	DefineType( tc, ltv, HopixAST.Abstract )
+}
+| TYPE tc=located(type_constructeur) EQUAL td=tdefinition
+{
+	DefineType(tc, [], td)
+}
+| TYPE tc=located(type_constructeur) ltv=delimited(LPAREN,separated_nonempty_list(COMMA,located(type_var)), RPAREN) EQUAL td=tdefinition
+{
+	DefineType(tc, ltv, td)
 }
 | EXTERN id=located(identifier) COLON t=located(ttype)
 {
@@ -43,12 +80,68 @@ definition:
 }
 
 
-tdefinition:
-| s=sum_types+ 
+vdefinition:
+(** A toplevel definition for a value. *)
+| v=val_def
 {
-	DefineSumType(s)
+	let x,e=v in
+	DefineValue(x,e)
+}
+| VAL x=located(identifier) EQUAL e=located(expression)
+{
+	DefineValue(x,e)
+}
+| VAL x=located(identifier) COLON t=located(ttype) EQUAL e=located(expression)
+{
+	DefineValue(x, e)
+}
+| FUN x = separated_list(AND, pair(located(identifier), vdeffun ))
+{
+	DefineRecFuns (x)
 }
 
+
+vdeffun:
+| x=var_fun LPAREN p_list=separated_nonempty_list(COMMA, located(pattern)) RPAREN l=option(preceded(COLON, located(ttype))) EQUAL e=located(expression)
+{
+	match l with 
+	| None -> Position.with_poss $startpos $endpos (FunctionDefinition( x, p_list, e))
+	| Some a -> let ta=(Position.with_poss $startpos $endpos (TypeAnnotation(e,a))) in 
+		Position.with_poss $startpos $endpos (FunctionDefinition( x, p_list, ta ))
+}
+
+var_fun:
+| LBRACKET le= separated_list(COMMA, located(type_var)) RBRACKET
+{
+	le
+}
+|
+{
+	[]
+}
+
+
+val_def: 
+| VAL v=located(identifier) COLON tip=located(ttype) ? EQUAL e=located(expression)
+{
+	let extract source dest = Position.with_pos (Position.position source) dest 
+	in 
+	let register tx odt te = match odt with
+	| None -> tx, te
+	| Some t -> let ta = TypeAnnotation(te,t) in let fte = extract te ta in tx, ( fte )
+	in register v tip e 
+}
+
+
+tdefinition:
+| PIPE? td=separated_nonempty_list(PIPE, pair(located(constructor), loption(delimited(LPAREN, separated_nonempty_list(COMMA, located(ttype)), RPAREN ))))
+{
+	DefineSumType(td)
+}
+|
+{
+	Abstract
+}
 
 sum_types:
 | x=located(constructor) s=sum_def?
@@ -82,38 +175,7 @@ stp:
 	t
 }
 
-vdefinition:
-(** A toplevel definition for a value. *)
-| VAL x=located(identifier) COLON t=located(ttype) EQUAL e=located(expression)
-{
-	DefineValue(x, e)
-}
-(** A toplevel definition for mutually recursive values. *)
-| FUN x = separated_list(AND, mdle_vdefinition)
-{
-	DefineRecFuns (x)
-}
 
-
-mdle_vdefinition : 
-| var_id = located(identifier) fun_def = located(function_definition)
-{
-	(var_id,fun_def)	
-}
-
-function_definition : 
-| ltp_var = loption(delimited(LBRACKET,separated_nonempty_list(COMMA, located(type_var)), RBRACKET))
-   l_tp = delimited(LPAREN,separated_nonempty_list(COMMA, located(pattern)), RPAREN) tp = option(preceded(COLON, located(ttype)))
-  EQUAL exp = located(expression)
-{
-	FunctionDefinition (ltp_var, l_tp, exp)
-}
-| ltp_var = loption(delimited(LBRACKET,separated_nonempty_list(COMMA, located(type_var)), RBRACKET))
-   l_tp = delimited(LPAREN,separated_nonempty_list(COMMA, located(pattern)), RPAREN) tp = option(preceded(COLON, located(ttype)))
-  EQUALRARROW exp = located(expression)
-{
-	FunctionDefinition (ltp_var, l_tp, exp)
-}
 
 ttype:
 | t=type_constructeur LPAREN s=located(ttype)* RPAREN
@@ -135,6 +197,17 @@ ttype:
 
 
 expression:
+| e=simple_expression
+{
+	e
+}
+| e=complex_expression
+{
+	e
+}
+
+
+simple_expression:
 (** Literals *)
 | e=located(literal)
 {
@@ -145,45 +218,49 @@ expression:
 {
 	Variable v
 }
-(** Construction d'une donnee etiquete **)
-| c=located(constructor) LBRACKET t=located(ttype)* RBRACKET LPAREN e=located(expression)* RPAREN
+(** Parenthesis *)
+| LPAREN e=expression RPAREN
 {
-	Tagged(c,t,e)
+	e
 }
+(**Application *)
+| e=located(expression) tl=loption(delimited(LBRACKET, separated_nonempty_list(COMMA, located(ttype)), RBRACKET)) LPAREN el=separated_nonempty_list(COMMA, located(expression)) RPAREN
+{
+	Apply(e, tl, el)
+}
+
+
+
+
+complex_expression:
+(** Construction d'une donnee etiquete **)
+| c=located(constructor) e1=loption(delimited(LBRACKET, separated_nonempty_list(COMMA, located(ttype)), RBRACKET)) e2=loption(delimited(LPAREN,separated_nonempty_list(COMMA, located(expression)), RPAREN)) 
+{
+	Tagged(c,e1,e2)
+}
+(** Sequence *) (** todo  *)
+
+(** A local definition *)
+| VAL x=located(identifier) COLON t=located(ttype) EQUAL e1=located(expression) SEMICOLON e2=located(expression)
+{
+	Define (x,e1,e2)
+}
+(**Anonymous function *)
+
+(**Binary Operation  *)
+
+
+(**Pattern Analysis *)
+
 (** Type Annotation *)
 | LPAREN e=located(expression) COLON t=located(ttype) RPAREN 
 {
 	TypeAnnotation(e,t)
 }
-(** Sequence *) (** todo must be recursive *)
-| e1=expression SEMICOLON e2=expression
-{
-	e1; e2
-}
-(** local def *)
 
-
-(**Application *)
-(**Anonymous function *)
-(**Binary Operation  *)
-(**Pattern Analysis *)
-| e=located(expression) QUESTIONMARK b=	branches
-{
-	Case (e,b)
-}
 (** Conditionnal *)
-(** Allocation *)
-(** Reference  *)
-| REF e=located(expression)
-{
-	Ref e
-}
 
-(** Value Affectation (Write) *)
-| e=located(expression) CEQUAL ee=located(expression)
-{
-	Write (e,ee)
-}
+(** Allocation *)
 
 (** Read *)
 | EXCLPOINT e=located(expression)
@@ -196,42 +273,28 @@ expression:
 {
 	While (e1,e2)
 }
-(** Parenthesis *)
-| LPAREN e=expression RPAREN
+
+
+
+
+
+
+
+(** Reference  *)
+| REF e=located(expression)
 {
-	e
+	Ref e
 }
 
-(** *)
-| e=located(expression) QUESTIONMARK b=	branches
+(** Value Affectation (Write) *)
+| e=located(expression) CEQUAL ee=located(expression)
 {
-	Case (e,b)
+	Write (e,ee)
 }
-(** An anonymous function *)
-| ANTISLASH fun_def = function_definition
-{
-	Fun (fun_def)
-}
-(** A local definition *)
-| VAL x=located(identifier) COLON t=located(ttype) EQUAL e1=located(expression) SEMICOLON e2=located(expression)
-{
-	Define (x,e1,e2)
-}
-(** Local mutually recursive values. *)
-| FUN x = separated_list(AND, mdle_vdefinition) SEMICOLON e=located(expression)
-{
-	DefineRec (x,e)
-}
-(** application *)  (* un conflict reduce/reduce *)(*
-| e=located(expression) l_tp=loption(delimited(LBRACKET, separated_nonempty_list(COMMA,located(ttype)), RBRACKET))
-  LPAREN l_exp= separated_nonempty_list(COMMA, located(expression)) RPAREN
-{
-	Apply (e, l_tp, l_exp)
-}
-*)
 
 
 (** branches *)
+(*
 branches:
 | option(PIPE) l=separated_nonempty_list(PIPE, located(branch))
 {
@@ -247,6 +310,7 @@ branch:
 {
 	Branch(p,e)
 }
+*)
 
 pattern:
 (** Etiquette *)
@@ -333,9 +397,11 @@ pattern:
 | OR             { "`||" }
 | AND            { "`&&" }
 
-%inline type_constructeur: ty=TYPECON
+%inline type_constructeur: ty=VARID
 {
-	TCon ty
+	match String.get ty 0 with
+	| '`' -> failwith "expects constructor"
+	| _ -> TCon ty
 }
 
 %inline identifier: i=VARID
