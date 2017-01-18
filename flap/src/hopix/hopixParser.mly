@@ -24,10 +24,9 @@
 %left THEN
 %left ELIF
 %left ELSE
-%left EQUALRIGHTARROW 
+%left LRARROW 
 
-%left  VIANEL
-%left VERTICALBAR
+%left PIPE
 %left ESPER
 %nonassoc DOUBLEDOTEQUAL
 %left DOUBLEOR
@@ -41,8 +40,8 @@
 %left PLUS MINUS
 %left MULTI DIVIDE
 %right REF
-%nonassoc QUESTIONDOT
-%nonassoc EXCLAMDOT
+%nonassoc EXCLPOINT
+%nonassoc QUESTIONMARK
 
 %start<HopixAST.t> program
 
@@ -207,6 +206,14 @@ expression:
 }
 
 
+complex_expression:
+(** A local definition *)
+| VAL x=located(identifier) COLON t=located(ttype) EQUAL e1=located(expression) SEMICOLON e2=located(expression)
+{
+	Define (x,e1,e2)
+}
+
+
 simple_expression:
 (** Literals *)
 | e=located(literal)
@@ -224,93 +231,12 @@ simple_expression:
 	e
 }
 (**Application *)
-| e=located(expression) tl=loption(delimited(LBRACKET, separated_nonempty_list(COMMA, located(ttype)), RBRACKET)) LPAREN el=separated_nonempty_list(COMMA, located(expression)) RPAREN
+(* | e=located(expression) tl=loption(delimited(LBRACKET, separated_nonempty_list(COMMA, located(ttype)), RBRACKET)) LPAREN el=separated_nonempty_list(COMMA, located(expression)) RPAREN
 {
 	Apply(e, tl, el)
 }
-
-
-
-
-complex_expression:
-(** Construction d'une donnee etiquete **)
-| c=located(constructor) e1=loption(delimited(LBRACKET, separated_nonempty_list(COMMA, located(ttype)), RBRACKET)) e2=loption(delimited(LPAREN,separated_nonempty_list(COMMA, located(expression)), RPAREN)) 
-{
-	Tagged(c,e1,e2)
-}
-(** Sequence *) (** todo  *)
-
-(** A local definition *)
-| VAL x=located(identifier) COLON t=located(ttype) EQUAL e1=located(expression) SEMICOLON e2=located(expression)
-{
-	Define (x,e1,e2)
-}
-(**Anonymous function *)
-
-(**Binary Operation  *)
-
-
-(**Pattern Analysis *)
-
-(** Type Annotation *)
-| LPAREN e=located(expression) COLON t=located(ttype) RPAREN 
-{
-	TypeAnnotation(e,t)
-}
-
-(** Conditionnal *)
-
-(** Allocation *)
-
-(** Read *)
-| EXCLPOINT e=located(expression)
-{
-	Read e
-}
-(** While loop *)
-
-| WHILE e1=located(expression) LBRACKET e2=located(expression) RBRACKET
-{
-	While (e1,e2)
-}
-
-
-
-
-
-
-
-(** Reference  *)
-| REF e=located(expression)
-{
-	Ref e
-}
-
-(** Value Affectation (Write) *)
-| e=located(expression) CEQUAL ee=located(expression)
-{
-	Write (e,ee)
-}
-
-
-(** branches *)
-(*
-branches:
-| option(PIPE) l=separated_nonempty_list(PIPE, located(branch))
-{
-	l
-}
-| option(PIPE) l=separated_nonempty_list(PIPE, located(branch)) RBRACKET
-{
-	l
-}
-
-branch:
-| p=located(pattern) EQUALRARROW e=located(expression)
-{
-	Branch(p,e)
-}
 *)
+
 
 pattern:
 (** Etiquette *)
@@ -318,51 +244,7 @@ pattern:
 {
 	PTaggedValue (c, [])
 }
-(**Variable id*)
-| i=located(identifier)
-{
-	PVariable i
-}
-| c=located(constructor) LPAREN l=separated_nonempty_list(COMMA,located(pattern)) RPAREN 
-{
-  PTaggedValue (c,l)
-}
 
-| UNDERSCORE
-{
-	PWildcard
-}
-(** Parenthesis *)
-| LPAREN p=pattern RPAREN
-{
-	p
-}
-(** Pattern with type*)
-| p=located(pattern) COLON t=located(ttype)
-{
-	PTypeAnnotation (p,t)
-}
-(**Literal *)
-| l=located(literal)
-{
-	PLiteral l
-}
-(**Valeur etiquette *)
-| c=located(constructor) LPAREN l=separated_nonempty_list(COMMA,located(pattern)) RPAREN
-{
-	PTaggedValue (c,l)
-}
-(** TODO check why creates epsilon-cycle *)
-(** Pattern OR *)
-(*| plist = separated_nonempty_list(PIPE, located(pattern))
-{
-	POr plist
-}*)
-(** Pattern AND*)
-(*| plist = separated_nonempty_list(AND, located(pattern))
-{
-	PAnd plist
-}*)
 
 
 %inline literal:
