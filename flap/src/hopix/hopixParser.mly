@@ -141,7 +141,7 @@ tdefinition:
 {
 	Abstract
 }
-
+(**
 sum_types:
 | x=located(constructor) s=sum_def?
 {
@@ -174,7 +174,7 @@ stp:
 	t
 }
 
-
+**)
 
 ttype:
 | t=type_constructeur LPAREN s=located(ttype)* RPAREN
@@ -185,9 +185,9 @@ ttype:
 {
 	t
 }
-| s=ttype RLARROW ttype
+| t1 = located(ttype) LRARROW t2 = located(ttype)
 {
-	s
+	TyCon ((TCon("->")),[t1;t2])
 }
 | e=type_var
 {
@@ -279,7 +279,7 @@ pattern:
 | OR             { "`||" }
 | AND            { "`&&" }
 
-%inline type_constructeur: ty=VARID
+%inline type_constructeur: ty = VARID
 {
 	match String.get ty 0 with
 	| '`' -> failwith "expects constructor"
