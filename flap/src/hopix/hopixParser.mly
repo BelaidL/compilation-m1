@@ -6,27 +6,25 @@
 
 %}
 
-%token VAL EQUAL CEQUAL EQUALRARROW
+%token VAL EQUAL
 %token TYPE EXTERN FUN REF
-%token COMMA COLON SEMICOLON RLARROW LRARROW
-%token STAR PLUS MINUS SLASH AND OR LOWEREQUAL GREATEREQUAL LOWERTHAN  GREATERTHAN 
+%token COMMA COLON SEMICOLON LRARROW
+%token AND 
 %token LPAREN RPAREN  RBRACKET LBRACKET PIPE
-%token WHILE ANTISLASH QUESTIONMARK EXCLPOINT UNDERSCORE
+%token EXCLPOINT
 
 %token EOF
 %token<Int32.t> INT
 %token<char> CHAR
 %token<bool> BOOL
 %token<string> STRING
-%token<string> TYPEVAR VARID CONSTRID INFIXID TYPECON
+%token<string> TYPEVAR VARID CONSTRID
 
 
-%right SEMICOLON
-%left PIPE
-%nonassoc EQUAL
-%nonassoc LOWEREQUAL GREATEREQUAL LOWERTHAN GREATERTHAN
-%left PLUS MINUS
-%nonassoc QUESTIONMARK
+
+
+
+
 
 %start<HopixAST.t> program
 
@@ -182,19 +180,8 @@ ttype:
 
 
 expression:
-| e=simple_expression
-{
-	e
-}
-| e=complex_expression
-{
-	e
-}
-
-
-complex_expression:
 (** A local definition *)
-| VAL x=located(identifier) COLON t=located(ttype) EQUAL e1=located(expression) SEMICOLON e2=located(expression)
+VAL x=located(identifier) COLON t=located(ttype) EQUAL e1=located(expression) SEMICOLON e2=located(expression)
 {
 	Define (x,e1,e2)
 }
@@ -217,14 +204,27 @@ complex_expression:
 {
 	Read e
 }
+(**Application *)
+| e=located(simple_expression) tl=loption(delimited(LBRACKET, separated_nonempty_list(COMMA, located(ttype)), RBRACKET)) LPAREN el=separated_nonempty_list(COMMA, located(simple_expression)) RPAREN
+{
+	Apply(e, tl, el)
+}
 (* SHIFT REDUCE CONFLICT
 | WHILE e1=located(expression) LBRACKET e2=located(expression) RBRACKET
 {
 	While (e1,e2)
 }
 *)
+| e=simple_expression
+{
+	e
+}
 
 simple_expression:
+e=located(simple_expression) tl=loption(delimited(LBRACKET, separated_nonempty_list(COMMA, located(ttype)), RBRACKET)) LPAREN el=separated_nonempty_list(COMMA, located(simple_expression)) RPAREN
+{
+	Apply(e, tl, el)
+}
 (** Literals *)
 | e=located(literal)
 {
@@ -240,12 +240,8 @@ simple_expression:
 {
 	e
 }
-(**Application *)
-(* | e=located(expression) tl=loption(delimited(LBRACKET, separated_nonempty_list(COMMA, located(ttype)), RBRACKET)) LPAREN el=separated_nonempty_list(COMMA, located(expression)) RPAREN
-{
-	Apply(e, tl, el)
-}
-*)
+
+
 
 
 pattern:
@@ -274,7 +270,7 @@ pattern:
 {
 	LBool b
 }
-
+(**
 %inline binop:
   x=INFIXID      { String.(sub x 0 (length x - 1)) }
 | PLUS           { "`+"  }
@@ -288,6 +284,8 @@ pattern:
 | EQUAL          { "`="  }
 | OR             { "`||" }
 | AND            { "`&&" }
+
+**)
 
 %inline type_constructeur: ty = VARID
 {

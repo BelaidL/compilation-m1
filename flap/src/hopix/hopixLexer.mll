@@ -68,8 +68,8 @@ rule token = parse
 
   (** Symbols *)
   | "="       { EQUAL 	    }
-  | ":="      { CEQUAL      }
-  | "=>"      { EQUALRARROW }
+  (**| ":="      { CEQUAL      }**)
+ (** | "=>"      { EQUALRARROW }**)
 
 
   (** Keywords *)
@@ -78,42 +78,43 @@ rule token = parse
   | "type"          { TYPE   }
   | "fun"           { FUN    }
   | "ref"	    { REF    }
-  | "while"	    { WHILE  }
+  (**| "while"	    { WHILE  }**)
 
   (** Identifiers *)
   | type_variable as i      { TYPEVAR  i  }
-  | type_con as i           { TYPECON  i  }
+  (**| type_con as i           { TYPECON  i  }
+  | alien_infix_id as i     { INFIXID  i  }**)	
   | var_id as i             { VARID    i  }
   | constr_id as i          { CONSTRID i  }
-  | alien_infix_id as i     { INFIXID  i  }
 
   (** Operators *)
+  | "&&"      { AND          }
+ (** | "||"      { OR           }
   | "*"       { STAR         }
   | "+"       { PLUS         }
   | "-"       { MINUS        }
   | "/"       { SLASH        }
-  | "&&"      { AND          }
-  | "||"      { OR           }
   | "<="      { LOWEREQUAL   }
-  | ">="      { GREATEREQUAL }
+  | ">="      { GREATEREQUAL }	
   | "<"       { LOWERTHAN    }
   | ">"       { GREATERTHAN  }
-  | "\\"      { ANTISLASH    }
+  | "\\"      { ANTISLASH    }**)
 
   (** Punctiation **)
   | ","       { COMMA        }
   | ":"       { COLON        }
   | ";"       { SEMICOLON    }
   | "->"      { LRARROW      }
-  | "<-"      { RLARROW      }
+(**| "<-"      { RLARROW      }
+  | "_"	      { UNDERSCORE   }
+  | "?"       { QUESTIONMARK }**)
   | "("       { LPAREN       }
   | ")"       { RPAREN       }
   | "["       { LBRACKET     }
   | "]"       { RBRACKET     }
   | "|"       { PIPE         }
   | "!"	      { EXCLPOINT    }
-  | "_"	      { UNDERSCORE   }
-  | "?"       { QUESTIONMARK }
+  
 
 
   | eof       { EOF          }
