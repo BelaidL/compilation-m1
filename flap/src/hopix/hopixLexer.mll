@@ -114,6 +114,7 @@ rule token = parse
   | "]"       { RBRACKET     }
   | "|"       { PIPE         }
   | "!"	      { EXCLPOINT    }
+  | "&"       { AMPER        }
   
 
 
