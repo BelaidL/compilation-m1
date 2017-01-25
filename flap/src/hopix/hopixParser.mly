@@ -251,7 +251,6 @@ pattern:
 }
 
 
-
 %inline literal:
 | i=INT
 {
@@ -311,3 +310,4 @@ pattern:
 %inline located(X): x=X{
 	Position.with_poss $startpos $endpos x
 }
+
