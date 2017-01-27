@@ -10,7 +10,7 @@
 %token LPAREN RPAREN  RBRACKET LBRACKET LRARROW PIPE EQUAL
 %token AND 
 %token EXCLPOINT
-%token COMMA COLON SEMICOLON 
+%token COMMA COLON SEMICOLON AMPER UNDERSCORE
 
 %token EOF
 %token<Int32.t> INT
@@ -242,13 +242,51 @@ e=located(simple_expression) tl=loption(delimited(LBRACKET, separated_nonempty_l
 
 
 
-
 pattern:
+(** Littéraux *)
+| l=located(literal)
+{
+  PLiteral (l)
+}
+(** Motif universel liant *)
+| i=located(identifier)
+{
+  PVariable (i)
+}
 (** Etiquette *)
 | c=located(constructor)
 {
-	PTaggedValue (c, [])
+  PTaggedValue(c,[])
 }
+(** Valeurs étiquetées *)
+| c=located(constructor) LPAREN l=separated_nonempty_list(COMMA,located(pattern)) RPAREN
+{
+  PTaggedValue(c,l)
+}
+(** Parenthésage *)
+| LPAREN p=pattern RPAREN
+{
+  p
+}
+(** Annotation de type *)
+| p=located(pattern) COLON t=located(ttype)
+{
+  PTypeAnnotation(p,t)
+}
+(** Motif unversel non liant *)
+| UNDERSCORE
+{
+  PWildcard
+}
+| lp=located(pattern) PIPE rp=located(pattern)
+{
+  POr (lp::rp::[])
+}
+| lp=located(pattern) AMPER rp=located(pattern)
+{
+  PAnd (lp::rp::[])
+}
+
 
 %inline literal:
 | i=INT
@@ -309,3 +347,4 @@ pattern:
 %inline located(X): x=X{
 	Position.with_poss $startpos $endpos x
 }
+
