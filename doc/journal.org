@@ -159,4 +159,42 @@
 
     (fun x -> x + y)[ y = 10 ]
 
+* Cours 7 <2016-12-05>
+** Rappel des épisodes précédents
+   - Notion de syntaxe
+   - Notion de liaison de noms
+   - Les pointeurs de fonction en C ne sont pas des représentations
+     sérieuses des fonctions
+   - La notion de fermeture
+
+** Différents évaluateurs pour un langage arithmétique avec "let"
+   - Sémantique à petits pas
+   - Sémantique à grands pas avec environnements d'évaluation
+** Jalon 2 du projet
+   - Présentation de la spécification de l'année dernière
+   - Règles du "while"
+* Cours 8 <2016-12-12>
+** Analyse statique
+   - Bonne liaison des noms
+** Compilation vers une machine
+* Cours 9 <2016-12-14> de 9h30 à 11h30 en salle 1008
+** Jalon 2
+** Examen
+** Les fonctions de seconde classe
+** Les fonctions de première classe
+* Cours 10 <2017-01-17>
+** Exceptionnellement, séance de 1h15
+** Pas de TD cette semaine
+** Où est parti le forum?
+** Retour sur le jalon 2
+** Présentation de la chaîne de compilation
+*** Hopix    -> Hobix
+*** Hobix    -> Fopix
+*** Fopix    -> Retrolix
+*** Retrolix -> Retrolix
+*** Retrolix -> MIPS
+** TODO Lire la spécification de MIPS
+* Cours 11 <2017-01-24>
+** TODO MIPS
+** TODO Le typage
 

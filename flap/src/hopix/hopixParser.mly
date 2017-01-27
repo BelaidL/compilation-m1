@@ -19,7 +19,7 @@
 %token<string> STRING
 %token<string> TYPEVAR VARID CONSTRID
 
-
+%left LRARROW
 
 
 
@@ -249,8 +249,6 @@ pattern:
 {
 	PTaggedValue (c, [])
 }
-
-
 
 %inline literal:
 | i=INT
