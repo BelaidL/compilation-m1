@@ -19,9 +19,13 @@
 %token<string> STRING
 %token<string> TYPEVAR VARID CONSTRID
 
+(*%right VAL TYPE RPAREN FUN EXTERN*) 
+
 %left LRARROW
 
-
+%left PIPE
+%nonassoc COLON	
+%left AMPER
 
 
 
@@ -35,23 +39,23 @@ program: def=located(definition) * EOF
 }
 
 definition:
-| TYPE x=located(type_constructeur)
+| TYPE x=located(type_con)
 {
 	DefineType( x, [], HopixAST.Abstract )
 }
-| TYPE tc=located(type_constructeur) ltv=delimited(LPAREN,separated_nonempty_list(COMMA,located(type_var)), RPAREN)
+| TYPE tc=located(type_con) ltv=delimited(LPAREN,separated_nonempty_list(COMMA,located(type_variable)), RPAREN)
 {
 	DefineType( tc, ltv, HopixAST.Abstract )
 }
-| TYPE tc=located(type_constructeur) EQUAL td=tdefinition
+| TYPE tc=located(type_con) EQUAL td=tdefinition
 {
 	DefineType(tc, [], td)
 }
-| TYPE tc=located(type_constructeur) ltv=delimited(LPAREN,separated_nonempty_list(COMMA,located(type_var)), RPAREN) EQUAL td=tdefinition
+| TYPE tc=located(type_con) ltv=delimited(LPAREN,separated_nonempty_list(COMMA,located(type_variable)), RPAREN) EQUAL td=tdefinition
 {
 	DefineType(tc, ltv, td)
 }
-| EXTERN id=located(identifier) COLON t=located(ttype)
+| EXTERN id=located(var_id) COLON t=located(ttype)
 {
 	DeclareExtern(id,t)
 }
@@ -68,23 +72,24 @@ vdefinition:
 	let x,e=v in
 	DefineValue(x,e)
 }
-| VAL x=located(identifier) EQUAL e=located(expression)
+| VAL x=located(var_id) EQUAL e=located(expression)
 {
 	DefineValue(x,e)
 }
-(*| VAL x=located(identifier) COLON ttype EQUAL e=located(expression)
+(*| VAL x=located(var_id) COLON ttype EQUAL e=located(expression)
 {
 	(*Typecheck??????*)
 	DefineValue(x, e)
 }*)
-| FUN x = separated_list(AND, pair(located(identifier), vdeffun ))
+
+| FUN x = separated_nonempty_list(AND, pair(located(var_id), vdeffun )) 
 {
-	DefineRecFuns (x)
+  DefineRecFuns (x)
 }
 
 
 vdeffun:
-| x=var_fun LPAREN p_list=separated_nonempty_list(COMMA, located(pattern)) RPAREN l=option(preceded(COLON, located(ttype))) EQUAL e=located(expression)
+| x=type_variable_list LPAREN p_list=separated_nonempty_list(COMMA, located(pattern)) RPAREN l=option(preceded(COLON, located(ttype))) EQUAL e=located(expression) 
 {
 	match l with 
 	| None -> Position.with_poss $startpos $endpos (FunctionDefinition( x, p_list, e))
@@ -92,8 +97,8 @@ vdeffun:
 		Position.with_poss $startpos $endpos (FunctionDefinition( x, p_list, ta ))
 }
 
-var_fun:
-| LBRACKET le= separated_list(COMMA, located(type_var)) RBRACKET
+type_variable_list:
+| LBRACKET le= separated_nonempty_list(COMMA, located(type_variable)) RBRACKET
 {
 	le
 }
@@ -104,7 +109,7 @@ var_fun:
 
 
 val_def: 
-| VAL v=located(identifier) COLON tip=located(ttype) ? EQUAL e=located(expression)
+| VAL v=located(var_id) COLON tip=located(ttype) ? EQUAL e=located(expression)
 {
 	let extract source dest = Position.with_pos (Position.position source) dest 
 	in 
@@ -160,7 +165,7 @@ stp:
 **)
 
 ttype:
-| t=type_constructeur  s=loption(delimited(LPAREN, separated_list(COMMA, located(ttype)), RPAREN))
+| t=type_con  s=loption(delimited(LPAREN, separated_list(COMMA, located(ttype)), RPAREN))
 {
 	TyCon(t,s)
 }	
@@ -172,17 +177,30 @@ ttype:
 {
 	TyCon ((TCon("->")),[t1;t2])
 }
-| e=type_var
+| e=type_variable
 {
 	TyVar e
 }
 
 
 expression:
+(**Application *)
+  e=located(simple_expression) tl=loption(delimited(LBRACKET, separated_nonempty_list(COMMA, located(ttype)), RBRACKET)) LPAREN el=separated_nonempty_list(COMMA, located(simple_expression)) RPAREN
+{
+	Apply(e, tl, el)
+}
 (** A local definition *)
-VAL x=located(identifier) COLON t=located(ttype) EQUAL e1=located(expression) SEMICOLON e2=located(expression)
+| VAL x = located(var_id) EQUAL e1 = located(expression) SEMICOLON e2=located(expression)
 {
 	Define (x,e1,e2)
+}
+| v = val_def SEMICOLON e2=located(expression)
+{
+        let (x,e1) = v in Define (x,e1,e2)
+}
+| FUN x = separated_list(AND, pair(located(var_id), vdeffun)) SEMICOLON e2=located(expression)
+{
+        DefineRec (x,e2)
 }
 (** Construction d'une donnee etiquete **)
 | c=located(constructor) e1=loption(delimited(LBRACKET, separated_nonempty_list(COMMA, located(ttype)), RBRACKET)) e2=loption(delimited(LPAREN,separated_nonempty_list(COMMA, located(expression)), RPAREN)) 
@@ -203,11 +221,7 @@ VAL x=located(identifier) COLON t=located(ttype) EQUAL e1=located(expression) SE
 {
 	Read e
 }
-(**Application *)
-| e=located(simple_expression) tl=loption(delimited(LBRACKET, separated_nonempty_list(COMMA, located(ttype)), RBRACKET)) LPAREN el=separated_nonempty_list(COMMA, located(simple_expression)) RPAREN
-{
-	Apply(e, tl, el)
-}
+
 (* SHIFT REDUCE CONFLICT
 | WHILE e1=located(expression) LBRACKET e2=located(expression) RBRACKET
 {
@@ -220,17 +234,14 @@ VAL x=located(identifier) COLON t=located(ttype) EQUAL e1=located(expression) SE
 }
 
 simple_expression:
-e=located(simple_expression) tl=loption(delimited(LBRACKET, separated_nonempty_list(COMMA, located(ttype)), RBRACKET)) LPAREN el=separated_nonempty_list(COMMA, located(simple_expression)) RPAREN
-{
-	Apply(e, tl, el)
-}
+
 (** Literals *)
 | e=located(literal)
 {
 	Literal e
 }
 (** Variables *)
-| v=located(identifier)
+| v=located(var_id)
 {
 	Variable v
 }
@@ -249,7 +260,7 @@ pattern:
   PLiteral (l)
 }
 (** Motif universel liant *)
-| i=located(identifier)
+| i=located(var_id)
 {
   PVariable (i)
 }
@@ -289,9 +300,9 @@ pattern:
 
 
 %inline literal:
-| i=INT
+| n=INT
 {
-	LInt i
+	LInt  n
 }
 | c=CHAR
 {
@@ -322,19 +333,19 @@ pattern:
 
 **)
 
-%inline type_constructeur: ty = VARID
+%inline type_con: ty = VARID
 {
 	match String.get ty 0 with
 	| '`' -> failwith "expects constructor"
 	| _ -> TCon ty
 }
 
-%inline identifier: i=VARID
+%inline var_id: i=VARID
 {
 	Id i
 }
 
-%inline type_var: t=TYPEVAR
+%inline type_variable: t=TYPEVAR
 {
 	TId t
 }

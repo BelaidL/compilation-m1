@@ -78,7 +78,10 @@ rule token = parse
   | "type"          { TYPE   }
   | "fun"           { FUN    }
   | "ref"	    { REF    }
+  | "and"           { AND    }
   (**| "while"	    { WHILE  }**)
+
+	| digit+ as n { INT (Int32.of_string n) }
 
   (** Identifiers *)
   | type_variable as i      { TYPEVAR  i  }
@@ -88,7 +91,7 @@ rule token = parse
   | constr_id as i          { CONSTRID i  }
 
   (** Operators *)
-  | "&&"      { AND          }
+  (**| "&&"      { ANDLOGIC        }*)
  (** | "||"      { OR           }
   | "*"       { STAR         }
   | "+"       { PLUS         }
