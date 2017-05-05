@@ -1,4 +1,22 @@
 à faire :
 	-resoudre le problem de l'inderscor (il doit pas etre accepté)   -> Résolu
 	-finir la regle -> vdefinitin ; expression (fait)
-	-si les deux dessus sont faite complité expression
+	-si les deux dessus sont faite complité expression 
+
+à faire :
+	-char est resolu sur Lexer (fait)
+	-string est resolu sur Lexer (fait)
+	-conflit resolu (fait)
+
+Travaille effectué sur expression : 
+	-int -> c fait
+	- exp :  type -> c fait
+	-var_id -> c fait 	
+	-const_id [type] (exp,exp..) -> c fait
+	-char -> à faire 
+	-string -> a verifier  	
+
+à faire :
+	-complété expression 
+	-brinch et brinches
+	-resoudre les conflit si y a ;) 

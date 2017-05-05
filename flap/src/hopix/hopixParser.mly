@@ -6,27 +6,30 @@
 
 %}
   
-%token VAL TYPE EXTERN FUN REF
+%token VAL TYPE EXTERN FUN REF AND
 %token LPAREN RPAREN  RBRACKET LBRACKET LRARROW PIPE EQUAL
-%token AND 
 %token EXCLPOINT
 %token COMMA COLON SEMICOLON AMPER UNDERSCORE
-
+%token STAR SLASH MINUS PLUS
+%token LOWEREQUAL LOWERTHAN GREATERTHAN GREATEREQUAL ORLOGIC ANDLOGIC
 %token EOF
+%token<string> INFIXID STRING TYPEVAR VARID CONSTRID
+%token<char> CHAR 
 %token<Int32.t> INT
-%token<char> CHAR
 %token<bool> BOOL
-%token<string> STRING
-%token<string> TYPEVAR VARID CONSTRID
 
 (*%right VAL TYPE RPAREN FUN EXTERN*) 
-
-%left LRARROW
-
-%left PIPE
-%nonassoc COLON	
+%right SEMICOLON
+%right LRARROW REF
+  
+%left ORLOGIC
+%left PIPE ANDLOGIC
+%nonassoc COLON LOWERTHAN GREATERTHAN GREATEREQUAL LOWEREQUAL EQUAL
 %left AMPER
-
+%left INFIXID  
+%left PLUS MINUS
+%left STAR SLASH
+%left EXCLPOINT  
 
 
 %start<HopixAST.t> program
@@ -228,6 +231,13 @@ expression:
 	While (e1,e2)
 }
 *)
+(** Binoperation*)
+| e1=located(expression) b_op=located(binop) e2=located(expression)
+{
+  let op = Position.(map (fun x -> Variable (map (fun _ -> Id x) b_op))) b_op in
+  let app1 = Position.with_poss $startpos(e1) $endpos(b_op) (Apply (op,[],[e1]))
+  in Apply (app1,[],[e2])
+}
 | e=simple_expression
 {
 	e
@@ -316,8 +326,8 @@ pattern:
 {
 	LBool b
 }
-(**
-%inline binop:
+
+    %inline binop:    
   x=INFIXID      { String.(sub x 0 (length x - 1)) }
 | PLUS           { "`+"  }
 | MINUS          { "`-"  }
@@ -328,10 +338,10 @@ pattern:
 | LOWERTHAN      { "`<"  }
 | LOWEREQUAL     { "`<=" }
 | EQUAL          { "`="  }
-| OR             { "`||" }
-| AND            { "`&&" }
+| ORLOGIC        { "`||" }
+| ANDLOGIC       { "`&&" }
 
-**)
+
 
 %inline type_con: ty = VARID
 {

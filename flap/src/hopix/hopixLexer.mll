@@ -11,6 +11,28 @@
   let error lexbuf =
     error "during lexing" (lex_join lexbuf.lex_start_p lexbuf.lex_curr_p)
 
+   let to_char_aux c = char_of_int (int_of_string (
+			  (String.sub c 2 ((String.length c)-3) )))
+
+   let to_char c =
+    match String.get c 2 with
+    | 't'-> '\t'
+    | '\\'-> '\\'
+    | 'n'-> '\n'
+    | 'b'-> '\b'
+    | 'r'-> '\r'
+    | '\''-> '\''
+    |_-> failwith "format non reconnu"
+   
+   let conv_to_char c = 
+    let len = String.length c in
+    match len with
+    | 3 -> String.get c 1
+    | 4 -> to_char c
+    | 6 -> to_char_aux c
+    | _ -> match (String.sub c 2 2) with
+	 |"0b"|"0B"|"0o"|"0O"|"0x"|"0X"-> to_char_aux c
+	 | _ -> failwith "format non reconnu"
 
 }
 
@@ -20,13 +42,9 @@ let symbol = [ '+' '-' '*' '/' '<' '=' '>' '&' '|' '_' ]
 
 let punct = symbol | [ '`' '~' '!' '?' '@' '$' '%' '^' '#' ',' '.' ':' ';' '{' '}' '(' ')' '[' ']' ' ']
 
-let punct = symbol | [ '`' '~' '!' '?' '@' '$' '%' '^' '#' ',' '.' ':' ';' '(' ')' '[' ']' ' ']
-
 let newline = ('\010' | '\013' | "\013\010")
 
 let blank   = [' ' '\009' '\012']
-
-let digit = ['0'-'9']
 
 let alpha = ['0'-'9' 'A'-'Z' 'a'-'z' ]
 
@@ -46,17 +64,19 @@ let integer = ['0'-'9']+ |'0'['x''X']['0'-'9' 'a'-'f' 'A'-'F']+ | '0' ['B' 'b'][
 
 let printable = alpha | punct
 
-let atomeS = ['\000' - '\255'] | '\\' '0'['x''X']['0'-'9' 'a'-'f' 'A'-'F']['0'-'9' 'a'-'f' 'A'-'F']  
-            | '\\' '0' ['B' 'b']['0'-'1']+ | '\\' '0' ['O' 'o']['0'-'7']+ | alpha | punct | "\\""\\" | "\\""'" | "\\""n" | "\\""t"
-      | "\\""b" | "\\""r"
+let bina = '\\' '0' ['B' 'b']['0'-'1']+
 
-let atom = ['\000' - '\255'] | '\\' '0'['x''X']['0'-'9' 'a'-'f' 'A'-'F']['0'-'9' 'a'-'f' 'A'-'F']  
-            | '\\' '0' ['B' 'b']['0'-'1']+ | '\\' '0' ['O' 'o']['0'-'7']+ | printable | "\\""\\" 
-	    | "\\""'" | "\\""n" | "\\""t" | "\\""b" | "\\""r"
+let octa = '\\' '0' ['O' 'o']['0'-'7']+
 
-let char = '\'' (atom | "'" | "'") '\''
+let hexa = '\\''0'['x' 'X']['0'-'9' 'a'-'f' 'A'-'F']['0'-'9' 'a'-'f' 'A'-'F']
 
-let string = '"' (atomeS | "\\""\"")* '"'
+let ascii_char =  '\\' ['0'-'1']['0'-'9']['0'-'9'] | '\\' '2' ['0'-'5']['0'-'5']
+
+let atom = ascii_char | hexa | octa | bina | printable | "\\""\\" | "\\""'" | "\\""n" | "\\""t" | "\\""b" | "\\""r"
+
+let char = "'" (atom | '"') "'"
+
+let string = '"' (atom | "'" | "\\""\"")* '"'
  
 rule token = parse
   (** Layout *)
@@ -81,18 +101,21 @@ rule token = parse
   | "and"           { AND    }
   (**| "while"	    { WHILE  }**)
 
-	| digit+ as n { INT (Int32.of_string n) }
-
+  (** literal **)
+  | integer as n                             { INT (Int32.of_string n)     }
+  | char as c                                { CHAR (conv_to_char c)       }
+  | string as s                              { eval "" (from_string (String.sub s 1 (String.length s - 2)))   }
   (** Identifiers *)
   | type_variable as i      { TYPEVAR  i  }
-  (**| type_con as i           { TYPECON  i  }
-  | alien_infix_id as i     { INFIXID  i  }**)	
+  (**| type_con as i           { TYPECON  i  }**)
+  | alien_infix_id as i     { INFIXID i   }	
   | var_id as i             { VARID    i  }
   | constr_id as i          { CONSTRID i  }
+  
 
   (** Operators *)
-  (**| "&&"      { ANDLOGIC        }*)
- (** | "||"      { OR           }
+  | "&&"      { ANDLOGIC     }
+  | "||"      { ORLOGIC      }
   | "*"       { STAR         }
   | "+"       { PLUS         }
   | "-"       { MINUS        }
@@ -101,7 +124,7 @@ rule token = parse
   | ">="      { GREATEREQUAL }	
   | "<"       { LOWERTHAN    }
   | ">"       { GREATERTHAN  }
-  | "\\"      { ANTISLASH    }**)
+(**  | "\\"      { ANTISLASH    }**)
 
   (** Punctiation **)
   | ","       { COMMA        }
@@ -141,3 +164,8 @@ rule token = parse
  and comment_line = parse
 | _               { comment_line  lexbuf} 
 | newline | eof   { token lexbuf }
+
+and eval s =parse
+| (atom|"'") as c     { eval (s^(String.make 1 (conv_to_char ("'"^c^"'") ))) lexbuf }
+| '\\''"'             { eval ( s^"\"") lexbuf                                       }
+| eof                 { STRING s                                                    }
