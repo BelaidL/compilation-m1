@@ -20,3 +20,28 @@ Travaille effectué sur expression :
 	-complété expression 
 	-brinch et brinches
 	-resoudre les conflit si y a ;) 
+
+
+expr ::=
+-int -------------------------------------------------------------------------(fait) ------------Entier
+-char ------------------------------------------------------------------------(fait) ------------Caractère
+string -----------------------------------------------------------------------(fait) ------------Chaine de caractères
+var_id -----------------------------------------------------------------------(fait) ------------Variable
+constr_id [ [ type { , type } ] ] [ ( expr { , expr } ) ] --------------------(fait) ------------Construction d'une donnée étiquetée
+( expr : type ) --------------------------------------------------------------(fait) ------------TypeAnnotation
+expr { ; expr } --------------------------------------------------------------(à faire) ---------Séquencement
+vdefinition ; expr  ----------------------------------------------------------(fait) ----------- Définition locale
+expr [ [ type { , type } ] ] ( expr { , expr } ) -----------------------------(fait) ------------Application
+\ [ [ type_variable { , type_variable } ] ] ( pattern { , pattern } ) => expr (à faire) ---------Fonction anonyme
+expr binop expr --------------------------------------------------------------(fait) ------------Opérations binaires
+expr ? branches --------------------------------------------------------------(à faire) ---------Analyse de motifs
+if expr then expr { elif expr then expr } [ else expr ] ----------------------(à faire) ---------Conditionnelle
+ref expr ---------------------------------------------------------------------(fait) ------------Allocation
+expr := expr -----------------------------------------------------------------(fait) ------------Affectation
+! expr -----------------------------------------------------------------------(fait) ------------Lecture
+while expr { expr } ----------------------------------------------------------(à faire) ---------Boucle
+( expr ) ---------------------------------------------------------------------(fait) ------------Prenthésage
+
+
+
+eof

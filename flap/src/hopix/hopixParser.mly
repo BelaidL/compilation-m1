@@ -7,7 +7,7 @@
 %}
   
 %token VAL TYPE EXTERN FUN REF AND
-%token LPAREN RPAREN  RBRACKET LBRACKET LRARROW PIPE EQUAL
+%token LPAREN RPAREN  RBRACKET LBRACKET LRARROW PIPE EQUAL CEQUAL
 %token EXCLPOINT
 %token COMMA COLON SEMICOLON AMPER UNDERSCORE
 %token STAR SLASH MINUS PLUS
@@ -20,16 +20,16 @@
 
 (*%right VAL TYPE RPAREN FUN EXTERN*) 
 %right SEMICOLON
-%right LRARROW REF
+%right LRARROW
   
 %left ORLOGIC
 %left PIPE ANDLOGIC
-%nonassoc COLON LOWERTHAN GREATERTHAN GREATEREQUAL LOWEREQUAL EQUAL
+%nonassoc COLON LOWERTHAN GREATERTHAN GREATEREQUAL LOWEREQUAL EQUAL CEQUAL
 %left AMPER
 %left INFIXID  
 %left PLUS MINUS
 %left STAR SLASH
-%left EXCLPOINT  
+%left EXCLPOINT REF
 
 
 %start<HopixAST.t> program
@@ -79,12 +79,6 @@ vdefinition:
 {
 	DefineValue(x,e)
 }
-(*| VAL x=located(var_id) COLON ttype EQUAL e=located(expression)
-{
-	(*Typecheck??????*)
-	DefineValue(x, e)
-}*)
-
 | FUN x = separated_nonempty_list(AND, pair(located(var_id), vdeffun )) 
 {
   DefineRecFuns (x)
@@ -238,9 +232,34 @@ expression:
   let app1 = Position.with_poss $startpos(e1) $endpos(b_op) (Apply (op,[],[e1]))
   in Apply (app1,[],[e2])
 }
+(** Affectation **)
+| e1=located(expression) CEQUAL e2=located(expression)
+{
+       Write (e1,e2)
+}
+| e=located(expression) SEMICOLON e_ex=end_exp
+    {
+  let loc x = Position.with_poss $startpos $endpos x in
+  let rec analy le = match le with
+  |[]-> assert false
+  |ex::[]-> Define(loc(Id "uname"), ex, ex)
+  |ex::[l_ex]-> Define(loc(Id "uname"), ex, l_ex)
+  |ex::l-> Define(loc(Id "uname"), ex,loc(analy l))
+	in analy(e::e_ex)
+}
 | e=simple_expression
 {
 	e
+}
+
+end_exp:
+| ex=located(expression) SEMICOLON l=end_exp
+{
+    ex::l
+}
+| 
+{
+  []
 }
 
 simple_expression:
@@ -260,6 +279,8 @@ simple_expression:
 {
 	e
 }
+
+
 
 
 

@@ -88,7 +88,7 @@ rule token = parse
 
   (** Symbols *)
   | "="       { EQUAL 	    }
-  (**| ":="      { CEQUAL      }**)
+  | ":="      { CEQUAL      }
  (** | "=>"      { EQUALRARROW }**)
 
 
