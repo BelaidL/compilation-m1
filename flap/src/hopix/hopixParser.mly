@@ -6,30 +6,31 @@
 
 %}
   
-%token VAL TYPE EXTERN FUN REF AND
-%token LPAREN RPAREN  RBRACKET LBRACKET LRARROW PIPE EQUAL CEQUAL
-%token EXCLPOINT
+%token VAL TYPE EXTERN FUN REF AND WHILE IF THEN ELIF ELSE 
+%token LPAREN RPAREN  RBRACKET LBRACKET LRARROW PIPE EQUAL CEQUAL LBRACE RBRACE ARROW
+%token EXCLPOINT QUESTIONMARK
 %token COMMA COLON SEMICOLON AMPER UNDERSCORE
 %token STAR SLASH MINUS PLUS
 %token LOWEREQUAL LOWERTHAN GREATERTHAN GREATEREQUAL ORLOGIC ANDLOGIC
 %token EOF
-%token<string> INFIXID STRING TYPEVAR VARID CONSTRID
+%token<string> INFIXID STRING TYPEVAR VARID CONSTRID TYPECON
 %token<char> CHAR 
 %token<Int32.t> INT
 %token<bool> BOOL
 
-(*%right VAL TYPE RPAREN FUN EXTERN*) 
+
+%nonassoc THEN
+%nonassoc ELSE ELIF
 %right SEMICOLON
 %right LRARROW
-  
-%left ORLOGIC
+%left ORLOGIC br
 %left PIPE ANDLOGIC
 %nonassoc COLON LOWERTHAN GREATERTHAN GREATEREQUAL LOWEREQUAL EQUAL CEQUAL
 %left AMPER
-%left INFIXID  
+%left INFIXID
 %left PLUS MINUS
 %left STAR SLASH
-%left EXCLPOINT REF
+%left EXCLPOINT REF QUESTIONMARK
 
 
 %start<HopixAST.t> program
@@ -126,41 +127,8 @@ tdefinition:
 {
 	Abstract
 }
-(**
-sum_types:
-| x=located(constructor) s=sum_def?
-{
-	let extract x = match x with
-	| Some x -> x
-	| None -> []
-		in x, (extract s)
-}
-| PIPE x=located(constructor) s=sum_def?
-{
-	let extract x = match x with 
-	| Some x -> x
-	| None -> []
-	in x, (extract s)
-}
 
-sum_def:
-| t=stype s=stp *
-{
-	t :: s
-}
-stype:
-| LPAREN t=located(ttype) 
-{
-	t
-}
-stp:
-| COMMA t=located(ttype) RPAREN
-{
-	t
-}
-
-**)
-
+    
 ttype:
 | t=type_con  s=loption(delimited(LPAREN, separated_list(COMMA, located(ttype)), RPAREN))
 {
@@ -218,13 +186,11 @@ expression:
 {
 	Read e
 }
-
-(* SHIFT REDUCE CONFLICT
-| WHILE e1=located(expression) LBRACKET e2=located(expression) RBRACKET
+(** Boucle **)
+| WHILE e1=located(expression) LBRACE e2=located(expression) RBRACE
 {
-	While (e1,e2)
+        While (e1,e2)
 }
-*)
 (** Binoperation*)
 | e1=located(expression) b_op=located(binop) e2=located(expression)
 {
@@ -237,31 +203,55 @@ expression:
 {
        Write (e1,e2)
 }
-| e=located(expression) SEMICOLON e_ex=end_exp
-    {
-  let loc x = Position.with_poss $startpos $endpos x in
-  let rec analy le = match le with
-  |[]-> assert false
-  |ex::[]-> Define(loc(Id "uname"), ex, ex)
-  |ex::[l_ex]-> Define(loc(Id "uname"), ex, l_ex)
-  |ex::l-> Define(loc(Id "uname"), ex,loc(analy l))
-	in analy(e::e_ex)
+(** Séquancement **)
+| e1=located(expression) SEMICOLON e2=located(expression)
+{
+      let loc x = Position.with_poss $startpos $endpos x in
+       Define(loc (Id "_"), e1, e2)
 }
+(** Conditionnelle **)
+| IF c=located(expression) THEN e1=located(expression) l_p=elif_expr
+{
+       let list_exp = (c,e1)::l_p  in
+       If (list_exp,None)
+}
+| IF c=located(expression) THEN e1=located(expression) l_p=elif_expr ELSE e2=located(expression)
+{
+       let list_exp = (c,e1)::l_p  in
+       If (list_exp,Some e2)
+}
+| IF c=located(expression) THEN e1=located(expression)  
+{
+       let list_exp = (c,e1)::[]  in
+       If (list_exp,None)
+}
+| IF c=located(expression) THEN e1=located(expression) ELSE e2=located(expression) 
+{
+       let list_exp = (c,e1)::[]  in
+       If (list_exp,Some e2)
+}
+| e=located(expression) QUESTIONMARK bs=branches
+{
+       Case (e,bs)
+}
+(** Simple_expression **)
 | e=simple_expression
 {
 	e
 }
 
-end_exp:
-| ex=located(expression) SEMICOLON l=end_exp
+(** elif expr then expr part **)    
+elif_expr:
+| ELIF c=located(expression) THEN e1=located(expression) l=elif_expr
 {
-    ex::l
+       (c,e1)::l
 }
-| 
+| ELIF c=located(expression) THEN e1=located(expression)
 {
-  []
+       [(c,e1)]
 }
 
+    
 simple_expression:
 
 (** Literals *)
@@ -280,50 +270,63 @@ simple_expression:
 	e
 }
 
-
-
-
-
+branches:
+| PIPE? l_b=s_n_list(PIPE, located(branch))
+{
+         l_b
+}
+| LBRACE PIPE? l_b=s_n_list(PIPE, located(branch)) RBRACE
+{
+         l_b
+}
+    
+branch:
+| p=located(pattern) ARROW e=located(expression) %prec br
+{
+        Branch (p,e)
+}
 pattern:
-(** Littéraux *)
+(** Littéraux **)
 | l=located(literal)
 {
   PLiteral (l)
 }
-(** Motif universel liant *)
+(** Motif universel liant **)
 | i=located(var_id)
 {
   PVariable (i)
 }
-(** Etiquette *)
+(** Etiquette **)
 | c=located(constructor)
 {
   PTaggedValue(c,[])
 }
-(** Valeurs étiquetées *)
+(** Valeurs étiquetées **)
 | c=located(constructor) LPAREN l=separated_nonempty_list(COMMA,located(pattern)) RPAREN
 {
   PTaggedValue(c,l)
 }
-(** Parenthésage *)
+(** Parenthésage **)
 | LPAREN p=pattern RPAREN
 {
   p
 }
-(** Annotation de type *)
+(** Annotation de type **)
 | p=located(pattern) COLON t=located(ttype)
 {
   PTypeAnnotation(p,t)
 }
-(** Motif unversel non liant *)
+(** Motif unversel non liant **)
 | UNDERSCORE
 {
   PWildcard
 }
+(** Disjonction **)
 | lp=located(pattern) PIPE rp=located(pattern)
 {
   POr (lp::rp::[])
 }
+(** Conjonction **)    
 | lp=located(pattern) AMPER rp=located(pattern)
 {
   PAnd (lp::rp::[])
@@ -364,11 +367,9 @@ pattern:
 
 
 
-%inline type_con: ty = VARID
+%inline type_con: ty = TYPECON
 {
-	match String.get ty 0 with
-	| '`' -> failwith "expects constructor"
-	| _ -> TCon ty
+	 TCon ty
 }
 
 %inline var_id: i=VARID
@@ -390,3 +391,12 @@ pattern:
 	Position.with_poss $startpos $endpos x
 }
 
+s_n_list(separator, X):
+x = X %prec br
+{
+      [ x ]
+}
+| x = X; separator; xs = s_n_list(separator, X)
+{
+      x :: xs
+}

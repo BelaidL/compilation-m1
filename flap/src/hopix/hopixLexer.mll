@@ -99,21 +99,24 @@ rule token = parse
   | "fun"           { FUN    }
   | "ref"	    { REF    }
   | "and"           { AND    }
-  (**| "while"	    { WHILE  }**)
-
+  | "while"	    { WHILE  }
+  | "if"            { IF     }
+  | "then"          { THEN   }
+  | "elif"          { ELIF   }
+  | "else"          { ELSE   }
   (** literal **)
   | integer as n                             { INT (Int32.of_string n)     }
   | char as c                                { CHAR (conv_to_char c)       }
   | string as s                              { eval "" (from_string (String.sub s 1 (String.length s - 2)))   }
-  (** Identifiers *)
+  (** Identifiers **)
   | type_variable as i      { TYPEVAR  i  }
-  (**| type_con as i           { TYPECON  i  }**)
+  | type_con as i           { TYPECON  i  }
   | alien_infix_id as i     { INFIXID i   }	
   | var_id as i             { VARID    i  }
   | constr_id as i          { CONSTRID i  }
   
 
-  (** Operators *)
+  (** Operators **)
   | "&&"      { ANDLOGIC     }
   | "||"      { ORLOGIC      }
   | "*"       { STAR         }
@@ -131,9 +134,9 @@ rule token = parse
   | ":"       { COLON        }
   | ";"       { SEMICOLON    }
   | "->"      { LRARROW      }
-(**| "<-"      { RLARROW      }
+  | "=>"      { ARROW        }
   | "_"	      { UNDERSCORE   }
-  | "?"       { QUESTIONMARK }**)
+  | "?"       { QUESTIONMARK }
   | "("       { LPAREN       }
   | ")"       { RPAREN       }
   | "["       { LBRACKET     }
@@ -141,6 +144,8 @@ rule token = parse
   | "|"       { PIPE         }
   | "!"	      { EXCLPOINT    }
   | "&"       { AMPER        }
+  | "{"       { LBRACE       }
+  | "}"       { RBRACE       }
   
 
 
