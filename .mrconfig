@@ -40,9 +40,14 @@ checkout = git clone 'git@moule.informatique.univ-paris-diderot.fr:Nicolas/compi
 [students/abderrazak-zidane]
 checkout = git clone 'git@moule.informatique.univ-paris-diderot.fr:abderrazak/compilation-m1-2016.git' abderrazak-zidane
 
+<<<<<<< HEAD
 [students/diaby-ebourefe]
 checkout = git clone 'git@moule.informatique.univ-paris-diderot.fr:diaby/compilation-m1-2016.git' diaby-ebourefe
 
 [students/Lagha-belaid]
 checkout = git clone 'git@moule.informatique.univ-paris-diderot.fr:hamilaki/compilation-m1-2016.git' Lagha-belaid
 
+=======
+[students/Lagha-belaid]
+checkout = git clone 'git@moule.informatique.univ-paris-diderot.fr:hamilaki/compilation-m1-2016.git' Lagha-belaid
+>>>>>>> parent of 33d75f7... test .mrconfig
