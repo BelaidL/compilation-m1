@@ -1,3 +1,0 @@
-extern p : int * bool -> int
-
-val x : int = p (0, 1)

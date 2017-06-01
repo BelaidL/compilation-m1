@@ -52,13 +52,6 @@ module List = struct
     in
     aux ls
 
-  let all_equal ls =
-    let rec aux = function
-      | [] | [_] -> true
-      | x :: y :: ys -> x = y && aux (y :: ys)
-    in
-    aux ls
-
   let unique_value ls =
     match uniq ls with
       | [x] -> Some x

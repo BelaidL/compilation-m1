@@ -1,3 +1,0 @@
-r : cell(int)
-write : unit
-read : int

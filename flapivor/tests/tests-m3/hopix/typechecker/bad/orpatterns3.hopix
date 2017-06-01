@@ -1,3 +1,0 @@
-type t = A (int) | B (int)
-
-val x = A (3) ? A (x : int) | B (y : int) => x

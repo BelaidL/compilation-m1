@@ -1,3 +1,0 @@
-val x = 1 + 1
-
-val test = print_int (x); print_string ("\n")

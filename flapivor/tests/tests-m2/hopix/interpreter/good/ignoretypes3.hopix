@@ -1,9 +1,0 @@
-type t = T
-
-val x = (T : t)
-
-val f = \['a] (x : 'a, y : 'a) => (x : 'a)
-
-val z = f [int] (x, x)
-
-val main = print_string ("OK!\n")

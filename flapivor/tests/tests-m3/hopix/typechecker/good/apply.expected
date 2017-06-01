@@ -1,3 +1,0 @@
-apply : ('a -> 'b) * 'a -> 'b
-succ : int -> int
-one : int

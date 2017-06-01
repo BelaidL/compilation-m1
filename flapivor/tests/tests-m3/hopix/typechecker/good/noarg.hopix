@@ -1,3 +1,0 @@
-fun f (x : unit) : unit = f (nothing)
-
-val test : unit = f (nothing)

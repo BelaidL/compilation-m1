@@ -1,2 +1,0 @@
-f : int * string -> int
-g : int -> int

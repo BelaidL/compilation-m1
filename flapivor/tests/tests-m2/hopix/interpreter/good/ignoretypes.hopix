@@ -1,5 +1,0 @@
-type t = T
-
-val x = 10
-
-val main = print_string ("OK!\n")

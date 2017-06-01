@@ -1,2 +1,0 @@
-fun f (x : unit) : unit =
- while (0) { f (nothing) }

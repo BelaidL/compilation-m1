@@ -1,3 +1,0 @@
-map : t('a) * ('a -> 'b) -> t('b)
-id : t('a) -> t('a)
-test : t(int)

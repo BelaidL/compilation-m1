@@ -1,3 +1,0 @@
-none : option(int)
-some : int -> option(int)
-unSome : option(int) * int -> int

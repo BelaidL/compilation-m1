@@ -47,10 +47,8 @@ clear:
 	rm -f $(STARGET)
 
 opt: $(OTARGET)
-	@ $(OCAMLBUILD) src/$<
 
 byte: $(BTARGET)
-	@ $(OCAMLBUILD) src/$<
 
 %:
 	@ $(OCAMLBUILD) src/$@

@@ -1,3 +1,0 @@
-fun id ['a] (x : 'a) : 'b = x
-
-val y : int = id [int] (42)
