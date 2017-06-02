@@ -34,7 +34,7 @@ vdefinition ; expr  ----------------------------------------------------------(f
 expr [ [ type { , type } ] ] ( expr { , expr } ) -----------------------------(fait) ------------Application
 \ [ [ type_variable { , type_variable } ] ] ( pattern { , pattern } ) => expr (à faire) ---------Fonction anonyme
 expr binop expr --------------------------------------------------------------(fait) ------------Opérations binaires
-expr ? branches --------------------------------------------------------------(à faire) ---------Analyse de motifs
+expr ? branches --------------------------------------------------------------(fait) ------------Analyse de motifs
 if expr then expr { elif expr then expr } [ else expr ] ----------------------(fait) ------------Conditionnelle
 ref expr ---------------------------------------------------------------------(fait) ------------Allocation
 expr := expr -----------------------------------------------------------------(fait) ------------Affectation
