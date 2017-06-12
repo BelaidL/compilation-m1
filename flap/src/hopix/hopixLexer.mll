@@ -89,7 +89,6 @@ rule token = parse
   (** Symbols *)
   | "="       { EQUAL 	    }
   | ":="      { CEQUAL      }
- (** | "=>"      { EQUALRARROW }**)
 
 
   (** Keywords *)
@@ -97,9 +96,9 @@ rule token = parse
   | "extern"        { EXTERN }
   | "type"          { TYPE   }
   | "fun"           { FUN    }
-  | "ref"	    { REF    }
+  | "ref"	   		{ REF    }
   | "and"           { AND    }
-  | "while"	    { WHILE  }
+  | "while"	    	{ WHILE  }
   | "if"            { IF     }
   | "then"          { THEN   }
   | "elif"          { ELIF   }
@@ -110,7 +109,6 @@ rule token = parse
   | string as s                              { eval "" (from_string (String.sub s 1 (String.length s - 2)))   }
   (** Identifiers **)
   | type_variable as i      { TYPEVAR  i  }
-  | type_con as i           { TYPECON  i  }
   | alien_infix_id as i     { INFIXID i   }	
   | var_id as i             { VARID    i  }
   | constr_id as i          { CONSTRID i  }
@@ -127,7 +125,7 @@ rule token = parse
   | ">="      { GREATEREQUAL }	
   | "<"       { LOWERTHAN    }
   | ">"       { GREATERTHAN  }
-(**  | "\\"      { ANTISLASH    }**)
+  | "\\"      { ANTISLASH    }
 
   (** Punctiation **)
   | ","       { COMMA        }

@@ -1,3 +1,4 @@
+
 à faire :
 	-resoudre le problem de l'inderscor (il doit pas etre accepté)   -> Résolu
 	-finir la regle -> vdefinitin ; expression (fait)
@@ -32,7 +33,7 @@ constr_id [ [ type { , type } ] ] [ ( expr { , expr } ) ] --------------------(f
 expr { ; expr } --------------------------------------------------------------(fait) ------------Séquencement
 vdefinition ; expr  ----------------------------------------------------------(fait) ----------- Définition locale
 expr [ [ type { , type } ] ] ( expr { , expr } ) -----------------------------(fait) ------------Application
-\ [ [ type_variable { , type_variable } ] ] ( pattern { , pattern } ) => expr (à faire) ---------Fonction anonyme
+\ [ [ type_variable { , type_variable } ] ] ( pattern { , pattern } ) => expr (fait) ------------Fonction anonyme
 expr binop expr --------------------------------------------------------------(fait) ------------Opérations binaires
 expr ? branches --------------------------------------------------------------(fait) ------------Analyse de motifs
 if expr then expr { elif expr then expr } [ else expr ] ----------------------(fait) ------------Conditionnelle

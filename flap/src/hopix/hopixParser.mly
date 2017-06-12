@@ -2,18 +2,18 @@
   open HopixAST
   open Position
 
-  (* version 1.7 *)
+  (* version 2*)
 
 %}
   
 %token VAL TYPE EXTERN FUN REF AND WHILE IF THEN ELIF ELSE 
-%token LPAREN RPAREN  RBRACKET LBRACKET LRARROW PIPE EQUAL CEQUAL LBRACE RBRACE ARROW
+%token LPAREN RPAREN  RBRACKET LBRACKET LRARROW PIPE EQUAL CEQUAL LBRACE RBRACE ARROW ANTISLASH
 %token EXCLPOINT QUESTIONMARK
 %token COMMA COLON SEMICOLON AMPER UNDERSCORE
 %token STAR SLASH MINUS PLUS
 %token LOWEREQUAL LOWERTHAN GREATERTHAN GREATEREQUAL ORLOGIC ANDLOGIC
 %token EOF
-%token<string> INFIXID STRING TYPEVAR VARID CONSTRID TYPECON
+%token<string> INFIXID STRING TYPEVAR VARID CONSTRID
 %token<char> CHAR 
 %token<Int32.t> INT
 %token<bool> BOOL
@@ -22,7 +22,7 @@
 %nonassoc THEN
 %nonassoc ELSE ELIF
 %right SEMICOLON
-%right LRARROW
+%right LRARROW ARROW
 %left ORLOGIC br
 %left PIPE ANDLOGIC
 %nonassoc COLON LOWERTHAN GREATERTHAN GREATEREQUAL LOWEREQUAL EQUAL CEQUAL
@@ -37,11 +37,13 @@
 
 %%
 
+(************************************************************************** program parts ***************************************************)
 program: def=located(definition) * EOF
 {
    def
 }
 
+(************************************************************************** definition parts *************************************************)
 definition:
 | TYPE x=located(type_con)
 {
@@ -68,7 +70,7 @@ definition:
 	vdef
 }
 
-
+(********************************************************************** Vdefintion parts ****************************************************)
 vdefinition:
 (** A toplevel definition for a value. *)
 | v=val_def
@@ -117,7 +119,7 @@ val_def:
 	in register v tip e 
 }
 
-
+(*************************************************************** tdefinition parts ********************************************************)
 tdefinition:
 | PIPE? td=separated_nonempty_list(PIPE, pair(located(constructor), loption(delimited(LPAREN, separated_nonempty_list(COMMA, located(ttype)), RPAREN ))))
 {
@@ -128,7 +130,7 @@ tdefinition:
 	Abstract
 }
 
-    
+(*************************************************************** ttype parts ***************************************************************)
 ttype:
 | t=type_con  s=loption(delimited(LPAREN, separated_list(COMMA, located(ttype)), RPAREN))
 {
@@ -147,7 +149,7 @@ ttype:
 	TyVar e
 }
 
-
+(**************************************************************** expression parts **********************************************************)
 expression:
 (**Application *)
   e=located(simple_expression) tl=loption(delimited(LBRACKET, separated_nonempty_list(COMMA, located(ttype)), RBRACKET)) LPAREN el=separated_nonempty_list(COMMA, located(simple_expression)) RPAREN
@@ -234,6 +236,11 @@ expression:
 {
        Case (e,bs)
 }
+(** fonction anonyme **)
+| ANTISLASH x=type_variable_list LPAREN p_list=separated_nonempty_list(COMMA, located(pattern)) RPAREN ARROW e=located(expression)
+{
+	Fun (FunctionDefinition( x, p_list, e))
+}
 (** Simple_expression **)
 | e=simple_expression
 {
@@ -251,17 +258,18 @@ elif_expr:
        [(c,e1)]
 }
 
-    
+(***************************************************************** simple_expression parts ********************************************)
 simple_expression:
 
 (** Literals *)
-| e=located(literal)
+| l = located(literal)
 {
-	Literal e
+	Literal l
 }
 (** Variables *)
 | v=located(var_id)
 {
+
 	Variable v
 }
 (** Parenthesis *)
@@ -270,6 +278,7 @@ simple_expression:
 	e
 }
 
+(******************************************* branches parts ************************************************************)
 branches:
 | PIPE? l_b=s_n_list(PIPE, located(branch))
 {
@@ -285,6 +294,8 @@ branch:
 {
         Branch (p,e)
 }
+
+(************************************************************* pattern parts ***************************************************)
 pattern:
 (** Littéraux **)
 | l=located(literal)
@@ -367,9 +378,11 @@ pattern:
 
 
 
-%inline type_con: ty = TYPECON
+%inline type_con: ty = VARID
 {
-	 TCon ty
+	match String.get ty 0 with
+	| '`' -> failwith "expects constructor"
+	| _ -> TCon ty
 }
 
 %inline var_id: i=VARID
@@ -387,7 +400,8 @@ pattern:
 	KId c
 }
 
-%inline located(X): x=X{
+%inline located(X): x=X
+{
 	Position.with_poss $startpos $endpos x
 }
 
