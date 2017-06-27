@@ -1,0 +1,4 @@
+tests-m1 [ Tue Jun 27 23:18:59 CEST 2017 ] [ a9aaac7ee18914ea5a03370e3279552f0fbbc77c ] BAD:   6 / 7 GOOD:  63 / 135  | 
+tests-m2 [ Tue Jun 27 23:19:01 CEST 2017 ] [ a9aaac7ee18914ea5a03370e3279552f0fbbc77c ] BAD:   0 / 0 GOOD:  0 / 71  | 
+tests-m3 [ Tue Jun 27 23:19:03 CEST 2017 ] [ a9aaac7ee18914ea5a03370e3279552f0fbbc77c ] BAD:   16 / 52 GOOD:  0 / 42  | 
+tests-m4 [ Tue Jun 27 23:19:05 CEST 2017 ] [ a9aaac7ee18914ea5a03370e3279552f0fbbc77c ] BAD:   0 / 0 GOOD:  0 / 48  | 
