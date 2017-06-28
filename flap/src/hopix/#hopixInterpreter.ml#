@@ -2,7 +2,7 @@ open Position
 open Error
 open HopixAST
 
-(** [error pos msg] reports runtime error messages. *)
+(**  [error pos msg] reports runtime error messages. *)
 let error positions msg =
   errorN "execution" positions msg
 

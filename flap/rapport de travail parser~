@@ -66,15 +66,7 @@ tout est fait
 -> les test sur duker du prof ;)  
 
 
-***************************************************************** HopixInterpreter **********************************************************************
 
-ajout de Literal of literal
-ajout de Varible of identifier 
-ajout de Apply of identifier * ty list * expression list ( rest a gérer l'application de fonction )
-------------------------------- creation de la memoire --------------------------------------------
-pour chaqu'un (ref , read, write) evaluer l'expression puis matcher sur le resultat si le resultat = VInt | VString |...|VFun x alors 
-|-> créer la memoire et retourner l'addresse 
-sinon failwith "ref need Literal"
 
 
 

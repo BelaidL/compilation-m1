@@ -20,8 +20,8 @@
 
 
 %nonassoc THEN
-%right SEMICOLON
 %nonassoc ELSE ELIF
+%right SEMICOLON
 %right LRARROW ARROW
 %left ORLOGIC br
 %left PIPE ANDLOGIC
@@ -221,7 +221,7 @@ expression:
        let list_exp = (c,e1)::l_p  in
        If (list_exp,Some e2)
 }
-| IF c=located(expression) THEN e1=located(expression)
+| IF c=located(expression) THEN e1=located(expression)  
 {
        let list_exp = (c,e1)::[]  in
        If (list_exp,None)
