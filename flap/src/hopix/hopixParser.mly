@@ -19,13 +19,15 @@
 %token<bool> BOOL
 
 
-%nonassoc THEN
+
 %right SEMICOLON
-%nonassoc ELSE ELIF
-%right LRARROW ARROW
+%nonassoc vdef 
+%right LRARROW ARROW CEQUAL
+%nonassoc THEN 
+%nonassoc ELSE ELIF  
 %left ORLOGIC br
 %left PIPE ANDLOGIC
-%nonassoc COLON LOWERTHAN GREATERTHAN GREATEREQUAL LOWEREQUAL EQUAL CEQUAL
+%nonassoc COLON LOWERTHAN GREATERTHAN GREATEREQUAL LOWEREQUAL  EQUAL
 %left AMPER
 %left INFIXID
 %left PLUS MINUS
@@ -82,19 +84,41 @@ vdefinition:
 {
 	DefineValue(x,e)
 }
-| FUN x = separated_nonempty_list(AND, pair(located(var_id), vdeffun )) 
+| FUN id=located(var_id)  x=type_variable_list LPAREN p_list=separated_nonempty_list(COMMA, located(pattern)) RPAREN l=option(preceded(COLON, located(ttype))) EQUAL e=located(expression) v=vdeffun 
 {
-  DefineRecFuns (x)
+       let start_f = match l with 
+	| None -> (id,(x,p_list,e))
+	| Some a -> let ta=(Position.with_poss $startpos $endpos (TypeAnnotation(e,a)))
+        in (id,(x,p_list,ta))
+           in
+           let ls = start_f::v in
+              let l =
+                List.map (fun (v_id, vdf) ->
+                  let a,b,c = vdf in
+                    (v_id, Position.with_poss $startpos $endpos (FunctionDefinition(a,b,c))) ) ls
+        in
+        DefineRecFuns (l)
 }
-
+(**| FUN x = located(var_id)  LPAREN p_list=separated_nonempty_list(COMMA, located(pattern)) RPAREN EQUAL e=located(expression) v_list = vdeffun
+    {
+  
+  let y = Position.with_poss $startpos $endpos ( FunctionDefinition ([],p_list,e)) in 
+  DefineRecFuns ([(x,y)])
+}
+**)
 
 vdeffun:
-| x=type_variable_list LPAREN p_list=separated_nonempty_list(COMMA, located(pattern)) RPAREN l=option(preceded(COLON, located(ttype))) EQUAL e=located(expression) 
+| AND id = located(var_id) x=type_variable_list LPAREN p_list=separated_nonempty_list(COMMA, located(pattern)) RPAREN l=option(preceded(COLON, located(ttype))) EQUAL e=located(expression) v = vdeffun
 {
 	match l with 
-	| None -> Position.with_poss $startpos $endpos (FunctionDefinition( x, p_list, e))
-	| Some a -> let ta=(Position.with_poss $startpos $endpos (TypeAnnotation(e,a))) in 
-		Position.with_poss $startpos $endpos (FunctionDefinition( x, p_list, ta ))
+	| None -> (id,(x,p_list,e))::v
+	| Some a -> let ta=(Position.with_poss $startpos $endpos (TypeAnnotation(e,a)))
+                       in
+                          (id,(x,p_list,ta))::v   
+}
+|   %prec vdef
+{
+   []
 }
 
 type_variable_list:
@@ -109,14 +133,10 @@ type_variable_list:
 
 
 val_def: 
-| VAL v=located(var_id) COLON tip=located(ttype) ? EQUAL e=located(expression)
+| VAL v=located(var_id) COLON tip=located(ttype)  EQUAL e=located(expression)
 {
-	let extract source dest = Position.with_pos (Position.position source) dest 
-	in 
-	let register tx odt te = match odt with
-	| None -> tx, te
-	| Some t -> let ta = TypeAnnotation(te,t) in let fte = extract te ta in tx, ( fte )
-	in register v tip e 
+	let ta = Position.with_poss $startpos $endpos (TypeAnnotation(e,tip))
+	in (v,ta) 
 }
 
 (*************************************************************** tdefinition parts ********************************************************)
@@ -151,11 +171,6 @@ ttype:
 
 (**************************************************************** expression parts **********************************************************)
 expression:
-(**Application *)
-  e=located(simple_expression) tl=loption(delimited(LBRACKET, separated_nonempty_list(COMMA, located(ttype)), RBRACKET)) LPAREN el=separated_nonempty_list(COMMA, located(simple_expression)) RPAREN
-{
-	Apply(e, tl, el)
-}
 (** A local definition *)
 | VAL x = located(var_id) EQUAL e1 = located(expression) SEMICOLON e2=located(expression)
 {
@@ -165,9 +180,20 @@ expression:
 {
         let (x,e1) = v in Define (x,e1,e2)
 }
-| FUN x = separated_list(AND, pair(located(var_id), vdeffun)) SEMICOLON e2=located(expression)
+| FUN id=located(var_id)  x=type_variable_list LPAREN p_list=separated_nonempty_list(COMMA, located(pattern)) RPAREN l=option(preceded(COLON, located(ttype))) EQUAL e=located(expression) v=vdeffun  SEMICOLON e2=located(expression)
 {
-        DefineRec (x,e2)
+  let start_f = match l with 
+	| None -> (id,(x,p_list,e))
+	| Some a -> let ta=(Position.with_poss $startpos $endpos (TypeAnnotation(e,a)))
+        in (id,(x,p_list,ta))
+           in
+           let ls = start_f::v in
+              let l =
+                List.map (fun (v_id, vdf) ->
+                  let a,b,c = vdf in
+                    (v_id, Position.with_poss $startpos $endpos (FunctionDefinition(a,b,c))) ) ls
+        in
+        DefineRec (l,e2)
 }
 (** Construction d'une donnee etiquete **)
 | c=located(constructor) e1=loption(delimited(LBRACKET, separated_nonempty_list(COMMA, located(ttype)), RBRACKET)) e2=loption(delimited(LPAREN,separated_nonempty_list(COMMA, located(expression)), RPAREN)) 
@@ -208,7 +234,7 @@ expression:
 | e1=located(expression) SEMICOLON e2=located(expression)
 {
       let loc x = Position.with_poss $startpos $endpos x in
-       Define(loc (Id "_"), e1, e2)
+       Define(loc (Id "nothing"), e1, e2)
 }
 (** Conditionnelle **)
 | IF c=located(expression) THEN e1=located(expression) l_p=elif_expr
@@ -259,7 +285,11 @@ elif_expr:
 
 (***************************************************************** simple_expression parts ********************************************)
 simple_expression:
-
+(**Application *)
+| e=located(simple_expression) tl=loption(delimited(LBRACKET, separated_nonempty_list(COMMA, located(ttype)), RBRACKET)) LPAREN el=separated_nonempty_list(COMMA, located(expression)) RPAREN 
+{
+	Apply(e, tl, el)
+}
 (** Literals *)
 | l = located(literal)
 {
@@ -334,12 +364,26 @@ pattern:
 (** Disjonction **)
 | lp=located(pattern) PIPE rp=located(pattern)
 {
-  POr (lp::rp::[])
+  let located x = Position.with_poss $startpos $endpos x in
+  let f = match (Position.value lp),(Position.value rp) with
+  | POr p1, POr p2 -> p1@p2
+  | POr p1, p2 -> p1@[(located p2)]
+  | p1, POr p2 -> (located p1)::p2
+  | _, _ -> [lp;rp]
+  in
+  POr (f)
 }
 (** Conjonction **)    
 | lp=located(pattern) AMPER rp=located(pattern)
 {
-  PAnd (lp::rp::[])
+  let located x = Position.with_poss $startpos $endpos x in
+  let f = match (Position.value lp),(Position.value rp) with
+  | PAnd p1, PAnd p2 -> p1@p2
+  | PAnd p1, p2 -> p1@[(located p2)]
+  | p1, PAnd p2 -> (located p1)::p2
+  | _, _ -> [lp;rp]
+  in
+  PAnd (f)
 }
 
 

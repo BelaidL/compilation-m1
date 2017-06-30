@@ -48,9 +48,9 @@ let blank   = [' ' '\009' '\012']
 
 let alpha = ['0'-'9' 'A'-'Z' 'a'-'z' ]
 
-let alien_infix_id = '\'' ['A'-'Z' 'a'-'z' '0'-'9' '+' '-' '*' '/' '<' '=' '>' '_']+ '\''
+let alien_infix_id = '`' ['A'-'Z' 'a'-'z' '0'-'9' '+' '-' '*' '/' '<' '=' '>' '_']+ '`'
 
-let alien_prefix_id = '\'' ['A'-'Z' 'a'-'z' '0'-'9' '+' '-' '*' '/' '<' '=' '>' '_']+
+let alien_prefix_id = '`' ['A'-'Z' 'a'-'z' '0'-'9' '+' '-' '*' '/' '<' '=' '>' '_']+
 
 let var_id = ['a'-'z'] ['A'-'Z' 'a'-'z' '0'-'9' '_' ]* | alien_prefix_id
 
@@ -96,9 +96,9 @@ rule token = parse
   | "extern"        { EXTERN }
   | "type"          { TYPE   }
   | "fun"           { FUN    }
-  | "ref"	   		{ REF    }
+  | "ref"	    { REF    }
   | "and"           { AND    }
-  | "while"	    	{ WHILE  }
+  | "while"	    { WHILE  }
   | "if"            { IF     }
   | "then"          { THEN   }
   | "elif"          { ELIF   }
@@ -166,7 +166,7 @@ rule token = parse
 
  and comment_line = parse
 | _               { comment_line  lexbuf} 
-| newline | eof   { token lexbuf }
+| newline  { token lexbuf }
 
 and eval s =parse
 | (atom|"'") as c     { eval (s^(String.make 1 (conv_to_char ("'"^c^"'") ))) lexbuf }
