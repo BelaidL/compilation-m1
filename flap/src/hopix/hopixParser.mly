@@ -19,9 +19,10 @@
 %token<bool> BOOL
 
 
-%nonassoc vdef
-%right SEMICOLON 
-%right LRARROW ARROW CEQUAL REF 
+
+%right SEMICOLON
+%nonassoc vdef 
+%right LRARROW ARROW CEQUAL REF
 %nonassoc THEN 
 %nonassoc ELSE ELIF  
 %left ORLOGIC br
