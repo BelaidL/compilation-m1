@@ -22,7 +22,7 @@
 
 %right SEMICOLON
 %nonassoc vdef 
-%right LRARROW ARROW CEQUAL REF
+%right LRARROW ARROW CEQUAL
 %nonassoc THEN 
 %nonassoc ELSE ELIF  
 %left ORLOGIC br
@@ -32,6 +32,7 @@
 %left INFIXID
 %left PLUS MINUS
 %left STAR SLASH
+%right REF
 %left EXCLPOINT QUESTIONMARK
 
 
@@ -84,9 +85,15 @@ vdefinition:
 {
 	DefineValue(x,e)
 }
-| FUN id=located(var_id)  x=type_variable_list LPAREN p_list=separated_nonempty_list(COMMA, located(pattern)) RPAREN l=option(preceded(COLON, located(ttype))) EQUAL e=located(expression) v=vdeffun 
+| f = fun_def
 {
-       let start_f = match l with 
+        DefineRecFuns (f)
+}
+
+fun_def:
+|  FUN id=located(var_id)  x=type_variable_list LPAREN p_list=separated_nonempty_list(COMMA, located(pattern)) RPAREN l=option(preceded(COLON, located(ttype))) EQUAL e=located(expression) v=vdeffun
+    {
+   let start_f = match l with 
 	| None -> (id,(x,p_list,e))
 	| Some a -> let ta=(Position.with_poss $startpos $endpos (TypeAnnotation(e,a)))
         in (id,(x,p_list,ta))
@@ -96,19 +103,11 @@ vdefinition:
                 List.map (fun (v_id, vdf) ->
                   let a,b,c = vdf in
                     (v_id, Position.with_poss $startpos $endpos (FunctionDefinition(a,b,c))) ) ls
-        in
-        DefineRecFuns (l)
-}
-(**| FUN x = located(var_id)  LPAREN p_list=separated_nonempty_list(COMMA, located(pattern)) RPAREN EQUAL e=located(expression) v_list = vdeffun
-    {
-  
-  let y = Position.with_poss $startpos $endpos ( FunctionDefinition ([],p_list,e)) in 
-  DefineRecFuns ([(x,y)])
-}
-**)
-
+              in
+	      l
+} (******************)
 vdeffun:
-| AND id = located(var_id) x=type_variable_list LPAREN p_list=separated_nonempty_list(COMMA, located(pattern)) RPAREN l=option(preceded(COLON, located(ttype))) EQUAL e=located(expression) v = vdeffun
+| AND id = located(var_id) x=type_variable_list LPAREN p_list=separated_nonempty_list(COMMA, located(pattern)) RPAREN l=option(preceded(COLON, located(ttype))) EQUAL e=located(expression) v=vdeffun
 {
 	match l with 
 	| None -> (id,(x,p_list,e))::v
@@ -180,20 +179,10 @@ expression:
 {
         let (x,e1) = v in Define (x,e1,e2)
 }
-| FUN id=located(var_id)  x=type_variable_list LPAREN p_list=separated_nonempty_list(COMMA, located(pattern)) RPAREN l=option(preceded(COLON, located(ttype))) EQUAL e=located(expression) v=vdeffun  SEMICOLON e2=located(expression)
+| f=fun_def SEMICOLON e2=located(expression)
 {
-  let start_f = match l with 
-	| None -> (id,(x,p_list,e))
-	| Some a -> let ta=(Position.with_poss $startpos $endpos (TypeAnnotation(e,a)))
-        in (id,(x,p_list,ta))
-           in
-           let ls = start_f::v in
-              let l =
-                List.map (fun (v_id, vdf) ->
-                  let a,b,c = vdf in
-                    (v_id, Position.with_poss $startpos $endpos (FunctionDefinition(a,b,c))) ) ls
-        in
-        DefineRec (l,e2)
+ 
+        DefineRec (f,e2)
 }
 (** Construction d'une donnee etiquete **)
 | c=located(constructor) e1=loption(delimited(LBRACKET, separated_nonempty_list(COMMA, located(ttype)), RBRACKET)) e2=loption(delimited(LPAREN,separated_nonempty_list(COMMA, located(expression)), RPAREN)) 
