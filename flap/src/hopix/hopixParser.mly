@@ -20,11 +20,10 @@
 
 
 
-%right SEMICOLON
-%nonassoc vdef 
+%right SEMICOLON %nonassoc vdefi
 %right LRARROW ARROW 
 %nonassoc THEN 
-%nonassoc ELSE ELIF  
+%nonassoc ELSE ELIF CEQUAL
 %left ORLOGIC br
 %left PIPE ANDLOGIC
 %nonassoc COLON LOWERTHAN GREATERTHAN GREATEREQUAL LOWEREQUAL  EQUAL
@@ -32,7 +31,7 @@
 %left INFIXID
 %left PLUS MINUS
 %left STAR SLASH
-%right REF CEQUAL
+%right REF 
 %left EXCLPOINT QUESTIONMARK
 
 
@@ -85,6 +84,8 @@ vdefinition:
 {
 	DefineValue(x,e)
 }
+
+(****)
 | f = fun_def
 {
         DefineRecFuns (f)
@@ -98,26 +99,29 @@ fun_def:
 	| Some a -> let ta=(Position.with_poss $startpos $endpos (TypeAnnotation(e,a)))
         in (id,(x,p_list,ta))
            in
-           let ls = start_f::v in
+           let ls = start_f::v in 
               let l =
                 List.map (fun (v_id, vdf) ->
                   let a,b,c = vdf in
                     (v_id, Position.with_poss $startpos $endpos (FunctionDefinition(a,b,c))) ) ls
               in
 	      l
-} (******************)
+}
+
+(******************)
 vdeffun:
+
 | AND id = located(var_id) x=type_variable_list LPAREN p_list=separated_nonempty_list(COMMA, located(pattern)) RPAREN l=option(preceded(COLON, located(ttype))) EQUAL e=located(expression) v=vdeffun
 {
-	match l with 
-	| None -> (id,(x,p_list,e))::v
+    	match l with 
+	| None -> (id,(x,p_list,e)) :: v
 	| Some a -> let ta=(Position.with_poss $startpos $endpos (TypeAnnotation(e,a)))
                        in
-                          (id,(x,p_list,ta))::v   
+                          (id,(x,p_list,ta)) :: v   
 }
-|   %prec vdef
+|  %prec vdefi
 {
-   []
+  [] 
 }
 
 type_variable_list:
@@ -179,9 +183,8 @@ expression:
 {
         let (x,e1) = v in Define (x,e1,e2)
 }
-| f=fun_def SEMICOLON e2=located(expression)
+| f = fun_def  SEMICOLON e2=located(expression)
 {
- 
         DefineRec (f,e2)
 }
 (** Construction d'une donnee etiquete **)
