@@ -82,8 +82,9 @@ rule token = parse
   (** Layout *)
   | newline         { next_line_and token lexbuf }
   | blank+          { token lexbuf               }
-  | "--"            { comment_line lexbuf        }
   | "{-"            { comment_block 0 lexbuf     }
+  | "--"            { comment_line lexbuf        }
+  
 
 
   (** Symbols *)
@@ -165,8 +166,9 @@ rule token = parse
 
 
  and comment_line = parse
-| _               { comment_line  lexbuf} 
-| newline  { token lexbuf }
+| eof | newline    { token lexbuf        }
+| _                { comment_line  lexbuf} 
+
 
 and eval s =parse
 | (atom|"'") as c     { eval (s^(String.make 1 (conv_to_char ("'"^c^"'") ))) lexbuf }

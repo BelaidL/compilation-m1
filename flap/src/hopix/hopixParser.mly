@@ -19,10 +19,9 @@
 %token<bool> BOOL
 
 
-
-%right SEMICOLON
-%nonassoc vdef 
-%right LRARROW ARROW CEQUAL
+%nonassoc vdef
+%right SEMICOLON 
+%right LRARROW ARROW CEQUAL REF 
 %nonassoc THEN 
 %nonassoc ELSE ELIF  
 %left ORLOGIC br
@@ -32,7 +31,7 @@
 %left INFIXID
 %left PLUS MINUS
 %left STAR SLASH
-%left EXCLPOINT REF QUESTIONMARK
+%left EXCLPOINT QUESTIONMARK
 
 
 %start<HopixAST.t> program
