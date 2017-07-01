@@ -20,8 +20,8 @@
 
 
    
-  %right SEMICOLON
-  %nonassoc vdefi
+%right SEMICOLON
+%nonassoc vdefi
 %right LRARROW ARROW 
 %nonassoc THEN 
 %nonassoc ELSE ELIF CEQUAL
@@ -87,22 +87,6 @@ vdefinition:
 }
 
 (****)
-|  FUN id=located(var_id)  x=type_variable_list LPAREN p_list=separated_nonempty_list(COMMA, located(pattern)) RPAREN l=option(preceded(COLON, located(ttype))) EQUAL e=located(expression) 
-{
-   let start_f = match l with 
-	| None -> (id,(x,p_list,e))
-	| Some a -> let ta=(Position.with_poss $startpos $endpos (TypeAnnotation(e,a)))
-        in (id,(x,p_list,ta))
-           in
-           let ls = start_f::[] in 
-              let l =
-                List.map (fun (v_id, vdf) ->
-                  let a,b,c = vdf in
-                    (v_id, Position.with_poss $startpos $endpos (FunctionDefinition(a,b,c))) ) ls
-              in
-	DefineRecFuns (l)
-}
-
 | FUN id=located(var_id)  x=type_variable_list LPAREN p_list=separated_nonempty_list(COMMA, located(pattern)) RPAREN l=option(preceded(COLON, located(ttype))) EQUAL e=located(expression) v=vdeffun
 {
    let start_f = match l with 
@@ -119,12 +103,6 @@ vdefinition:
 	      DefineRecFuns (l)
 }
 
-(**
-| f = fun_def
-{
-        DefineRecFuns (f)
-}
-**)
 
 
     
@@ -156,14 +134,9 @@ vdeffun:
                        in
                           (id,(x,p_list,ta)) :: v   
 }
-|  AND id = located(var_id) x=type_variable_list LPAREN p_list=separated_nonempty_list(COMMA, located(pattern)) RPAREN l=option(preceded(COLON, located(ttype))) EQUAL e=located(expression) %prec vdefi
+|   %prec vdefi
 {
-    	match l with 
-	| None -> (id,(x,p_list,e)) :: []
-	| Some a -> let ta=(Position.with_poss $startpos $endpos (TypeAnnotation(e,a)))
-                       in
-                          (id,(x,p_list,ta)) :: []
-   
+     []
 }
 
 
