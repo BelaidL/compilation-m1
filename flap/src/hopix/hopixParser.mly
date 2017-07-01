@@ -22,7 +22,7 @@
 
 %right SEMICOLON
 %nonassoc vdef 
-%right LRARROW ARROW CEQUAL
+%right LRARROW ARROW 
 %nonassoc THEN 
 %nonassoc ELSE ELIF  
 %left ORLOGIC br
@@ -32,7 +32,7 @@
 %left INFIXID
 %left PLUS MINUS
 %left STAR SLASH
-%right REF
+%right REF CEQUAL
 %left EXCLPOINT QUESTIONMARK
 
 
