@@ -253,6 +253,19 @@ and definition runtime d =
     { runtime with
       environment = bind_identifier runtime.environment x v
     }
+  | DefineType (tp, tv, td) -> failwith "Not implemented"
+  | DeclareExtern (id,ty) -> failwith "Not implemented"
+  | DefineRecFuns( lst ) ->  
+      let rec aux env = function 
+        | [] -> env
+        | (id, df)::t ->
+          let FunctionDefinition(tys,ps,e) = df.value
+          in let v = VFun(ps,e,env)
+          in  aux (bind_identifier env id v) t
+        in 
+        { runtime with
+          environment = (aux runtime.environment lst)
+        }
 
 and expression' environment memory e =
   expression (position e) environment memory (value e)
@@ -313,6 +326,7 @@ and expression position environment memory = function
       let v = expression' environment memory c in
       begin match value_as_bool v with
       | None -> Printf.printf "Not valid While condition"; assert false
+      (* mauvais typing ?? *)
       | Some true -> expression' environment memory e ; eval_while (c,e)
       | Some false -> VUnit
       end
@@ -380,7 +394,7 @@ and patterns p e runtime  =
 	      aux (patterns p.value e run) qp
 	    with NoPatternMatch -> raise NoPatternMatch
       in aux runtime p_list
-	
+	(* warning unused *)
   | _ -> raise NoPatternMatch
 	
 
