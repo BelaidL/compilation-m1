@@ -336,7 +336,7 @@ and branches runtime e lb =
 
 and patterns p e runtime  =
   match p with
-  | PWildcard -> runtime
+   | PWildcard -> runtime
 	
   | PVariable id -> { environment = bind_identifier runtime.environment id e   ; memory = runtime.memory}
     

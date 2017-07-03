@@ -54,7 +54,7 @@ let alien_prefix_id = '`' ['A'-'Z' 'a'-'z' '0'-'9' '+' '-' '*' '/' '<' '=' '>' '
 
 let var_id = ['a'-'z'] ['A'-'Z' 'a'-'z' '0'-'9' '_' ]* | alien_prefix_id
 
-let constr_id = ['A'-'Z' '_'] ['A'-'Z' 'a'-'z' '0'-'9' '_']*
+let constr_id = ['A'-'Z'] ['A'-'Z' 'a'-'z' '0'-'9' '_']* | '_' ['A'-'Z' 'a'-'z' '0'-'9' '_']+
 
 let type_con = ['a'-'z'] ['A'-'Z' 'a'-'z' '0'-'9' '_']*
 
