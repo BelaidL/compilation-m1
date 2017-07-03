@@ -229,7 +229,9 @@ let initial_runtime () = {
   memory      = Memory.create (640 * 1024 (* should be enough. -- B.Gates *));
   environment = primitives;
 }
-
+    
+exception NoPatternMatch
+    
 let rec evaluate runtime ast =
   try
     let runtime' = List.fold_left definition runtime ast in
@@ -273,9 +275,115 @@ and expression position environment memory = function
   | Literal l -> literal (l.value)
   | Variable v -> Environment.lookup position (v.value) environment
   | Define (id, e1, e2) -> let x = expression' environment memory e1 in
-       expression' (bind_identifier environment id x) memory e2
+    expression' (bind_identifier environment id x) memory e2
+  | If (l_c_e,e) ->
+      let rec eval_if l =
+      begin match l with
+      |(((c,e1)::q),e) ->
+         let v = expression' environment memory c in
+	 begin match value_as_bool v with
+	 |None -> Printf.printf "Not valid if condition" ; assert false
+	 |Some true -> expression' environment memory e1
+	 |Some false -> eval_if (q,e)
+         end
+      |([],e) -> begin match e with |None -> VUnit |Some exp -> expression' environment memory exp end
+      end
+      in eval_if (l_c_e,e)
+  | Tagged (c,l_ty,l_e) ->
+      let l = List.map (fun x -> (expression' environment memory x)) l_e in
+      VTaggedValues (c.value, l)
+  | TypeAnnotation (e,_) -> expression' environment memory e
+  | Ref e -> let v = expression' environment memory e in
+    let adr = Memory.allocate memory 1 v in
+    VAddress adr
+  | Read e -> let v = expression' environment memory e in
+    begin match v with
+    | VAddress a -> Memory.read (Memory.dereference memory a) 0
+    | _ -> failwith "error address"
+    end
+  | Write (e1,e2) -> let v1 = expression' environment memory e1 in
+    begin match v1 with
+    | VAddress a -> let v2 = expression' environment memory e2 in
+      Memory.write  (Memory.dereference memory a) 0 v2; 
+      VUnit
+    | _ -> failwith "error address"
+    end
+  | While (e1,e2) -> 
+  let rec eval_while (c,e) =
+      let v = expression' environment memory c in
+      begin match value_as_bool v with
+      | None -> Printf.printf "Not valid While condition"; assert false
+      | Some true -> expression' environment memory e ; eval_while (c,e)
+      | Some false -> VUnit
+      end
+  in  eval_while (e1,e2)
+    
+  | Case (e,l) ->
+    let lb = List.map (fun x -> value x) l in
+    let runtime = {environment = environment ; memory = memory} in
+    let v = expression' environment memory e in
+    branches runtime v lb
   | _ -> failwith "Student! This is your job!"
+
+and branches runtime e lb =
+  match lb with
+  | [] -> failwith "No patterns"
+  | Branch (p,exp)::q ->
+      try
+       let run  =  patterns (p.value) e runtime in
+	expression' run.environment run.memory exp
+      with NoPatternMatch -> branches runtime e q
+
+and patterns p e runtime  =
+  match p with
+  | PWildcard -> runtime
 	
+  | PVariable id -> { environment = bind_identifier runtime.environment id e   ; memory = runtime.memory}
+    
+  | PLiteral x ->
+      begin match e with
+      | VInt y when(LInt y = x.value) -> runtime
+      | VChar y when(LChar y = x.value) -> runtime
+      | VString y when(LString y = x.value) -> runtime
+      | VBool y when(LBool y = x.value) -> runtime
+      | _ -> raise NoPatternMatch
+      end	
+  | PTypeAnnotation (a,_) -> patterns a.value e runtime
+	
+  | PTaggedValue (cons,p_list) ->
+      begin match e with
+      | VTaggedValues (cons', gv_list) when( (cons.value) = cons' && List.length p_list = List.length gv_list) ->
+	  let rec aux pl gvl run =
+	    match pl, gvl with
+	    | [],[] -> run
+	    | p::qp , g::qg ->
+		aux qp qg (patterns p.value g run)
+	    | _ -> failwith "error pattern tagged value"
+	  in aux p_list gv_list runtime
+      | _ -> raise NoPatternMatch
+      end
+	
+  | POr p_list ->
+      let rec aux = function
+	| [] -> raise NoPatternMatch
+	| p::q ->
+	    try
+	      patterns p.value e runtime
+	    with NoPatternMatch -> aux q
+      in aux p_list
+	
+  | PAnd p_list ->
+      let rec aux run = function
+	| [] -> run
+	| p::qp ->
+	    try
+	      aux (patterns p.value e run) qp
+	    with NoPatternMatch -> raise NoPatternMatch
+      in aux runtime p_list
+	
+  | _ -> raise NoPatternMatch
+	
+
 and expressions environment memory es =
   let rec aux vs memory = function
     | [] ->
