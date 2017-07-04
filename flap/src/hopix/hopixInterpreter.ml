@@ -292,13 +292,11 @@ and expression' environment memory e =
 and expression position environment memory = function
 
   |Apply (e,ty,es) ->
-      
+      let vbs = expressions environment memory es in 
       begin match (expression' environment memory e) with
       | VPrimitive (_,f) ->
-	  let vbs = expressions environment memory es
-	  in f memory vbs
+	   f memory vbs
       | VFun (lp,e,env) ->
-	  let vbs = expressions environment memory es in
 	  let run = {environment = env ; memory = memory}
 	  in let new_run = patternList lp vbs run
 	  in expression' new_run.environment new_run.memory e
