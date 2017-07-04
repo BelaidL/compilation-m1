@@ -255,17 +255,30 @@ and definition runtime d =
     }
   | DefineType (tp, tv, td) -> failwith "Not implemented"
   | DeclareExtern (id,ty) -> failwith "Not implemented"
-  | DefineRecFuns( lst ) ->  
-      let rec aux env = function 
-        | [] -> env
-        | (id, df)::t ->
-          let FunctionDefinition(tys,ps,e) = df.value
-          in let v = VFun(ps,e,env)
-          in  aux (bind_identifier env id v) t
-        in 
-        { runtime with
-          environment = (aux runtime.environment lst)
-        }
+  | DefineRecFuns( lst ) ->
+      let l = List.map (fun (id, df) ->
+	(id, df.value) ) lst in definerecfun runtime l
+
+and definerecfun run l =
+  match l with
+  | [] -> run
+  | (x,e)::tl -> let new_run = know_fun run x e
+  in definerecfun new_run tl
+
+and know_fun run x e =
+  match e with
+  | FunctionDefinition(lty,lp,exp) ->
+      {environment = bind_identifier run.environment x (VFun(lp,exp,run.environment))
+							  ; memory = run.memory}
+  | _ -> failwith "error functiondefintion"
+
+and patternList lp le run =
+  match lp,le with
+  | [],[] -> run
+  | p::pq,e::eq ->      
+      let new_run = patterns (p.value) e run
+      in patternList pq eq new_run
+  | _,_ -> failwith "error function defintion patterns"
 
 and expression' environment memory e =
   expression (position e) environment memory (value e)
@@ -279,9 +292,17 @@ and expression' environment memory e =
 and expression position environment memory = function
 
   |Apply (e,ty,es) ->
-      let vbs = expressions environment memory es in
+      
       begin match (expression' environment memory e) with
-      | VPrimitive (_,f) -> f memory vbs
+      | VPrimitive (_,f) ->
+	  let vbs = expressions environment memory es
+	  in f memory vbs
+      | VFun (lp,e,env) ->
+	  let vbs = expressions environment memory es in
+	  let run = {environment = env ; memory = memory}
+	  in let new_run = patternList lp vbs run
+	  in expression' new_run.environment new_run.memory e
+  
       | _ -> assert false 
       end
   | Fun (FunctionDefinition(tys,ps,e)) -> VFun (ps,e,environment)
@@ -331,7 +352,11 @@ and expression position environment memory = function
       | Some false -> VUnit
       end
   in  eval_while (e1,e2)
-    
+  | DefineRec (lst,e) ->
+      let run = {environment = environment ; memory = memory}
+      in let new_run = definerecfun run (List.map (fun (id,df) -> (id,df.value))  lst) 
+      in expression' new_run.environment new_run.memory e
+	    
   | Case (e,l) ->
     let lb = List.map (fun x -> value x) l in
     let runtime = {environment = environment ; memory = memory} in
