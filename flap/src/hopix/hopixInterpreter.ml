@@ -258,34 +258,34 @@ and definition runtime d =
   | DefineRecFuns( lst ) ->
       let l = List.map (fun (id, df) ->
 	(id, df.value) ) lst in
-      definefun runtime l
+      definerecfun runtime l
 	
-and definefun run l =
-  let new_run = definerecfun run l l 2
-  in runfinal new_run run l
+and definerecfun run l =
+  let new_run = defineAllfun run l
+  in finalruntime new_run run l
     
-and definerecfun run l l_copie n =
-  match l,n with
-  | [],0 -> run
-  | [],y -> definerecfun run l_copie l_copie (y-1)
-  | (x,e)::tl,y -> let new_run = know_fun run x e
-  in definerecfun new_run tl l_copie y
+and defineAllfun run l =
+  match l with
+  | []-> run
+  | (x,e)::tl -> let new_run = know_fun run x e
+  in definerecfun new_run tl
 
 and know_fun run x e =
   match e with
   | FunctionDefinition(lty,lp,exp) ->
       try
-	Environment.update x.position x.value run.environment (VFun(lp,exp,run.environment)) ; run
+	Environment.update x.position x.value run.environment (VFun(lp,exp,run.environment)) ;
+	run
       with Environment.UnboundIdentifier (_,_) ->	
       {environment = bind_identifier run.environment x (VFun(lp,exp,run.environment))
 							  ; memory = run.memory}
   | _ -> failwith "error functiondefintion"
 
-and runfinal run run_final = function
+and finalruntime run run_final = function
   | [] -> run_final
   | (x,e)::tl ->
       let new_run = know_fun run x e
-      in runfinal run new_run tl
+      in finalruntime run new_run tl
 	
 and patternList lp le run =
   match lp,le with
@@ -367,7 +367,7 @@ and expression position environment memory = function
   in  eval_while (e1,e2)
   | DefineRec (lst,e) ->
       let run = {environment = environment ; memory = memory}
-      in let new_run = definefun run (List.map (fun (id,df) -> (id,df.value))  lst) 
+      in let new_run = definerecfun run (List.map (fun (id,df) -> (id,df.value))  lst) 
       in expression' new_run.environment new_run.memory e
 	    
   | Case (e,l) ->
