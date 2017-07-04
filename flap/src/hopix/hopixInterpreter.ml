@@ -17,6 +17,7 @@ type 'e gvalue =
   | VTaggedValues of constructor * 'e gvalue list
   | VPrimitive    of string * ('e gvalue Memory.t -> 'e gvalue list -> 'e gvalue)
   | VFun          of pattern located list * expression located * 'e
+  | VTypeDefin     of  'e gvalue list
 
 type ('a, 'e) coercion = 'e gvalue -> 'a option
 let value_as_int      = function VInt x -> Some x | _ -> None
@@ -58,7 +59,9 @@ let print_value m v =
 	| VTaggedValues (KId k, vs) ->
 	  k ^ "(" ^ String.concat ", " (List.map (print_value (d + 1)) vs) ^ ")"
 	| VFun _ ->
-	  "<fun>"
+	    "<fun>"
+	| VTypeDefin l ->
+	    String.concat "|" (List.map (print_value (d + 1)) l)
         | VPrimitive (s, _) ->
           Printf.sprintf "<primitive: %s>" s
   and print_array_value d block =
@@ -253,12 +256,26 @@ and definition runtime d =
     { runtime with
       environment = bind_identifier runtime.environment x v
     }
-  | DefineType (tp, tv, td) -> failwith "Not implemented"
+  | DefineType (tp, tv, td) ->
+      begin match tp.value with
+      | TCon x -> let id  = (Id x) in let l = typedefintion td
+      in let y = { tp with value= id } in
+	{ runtime with
+          environment = bind_identifier runtime.environment y   (VTypeDefin l)
+        }
+      end
+	
+	
   | DeclareExtern (id,ty) -> failwith "Not implemented"
   | DefineRecFuns( lst ) ->
       let l = List.map (fun (id, df) ->
 	(id, df.value) ) lst in
       definerecfun runtime l
+
+and typedefintion t =
+  match t with
+  | DefineSumType tl -> List.map (fun (x,y) -> VTaggedValues(x.value , [])) tl
+  | Abstract -> []
 	
 and definerecfun run l =
   let new_run = defineAllfun run l
