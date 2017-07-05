@@ -193,7 +193,15 @@ ttype:
 expression:
 | MINUS e2 = located(expression)
 {
-	Literal ({ e2 with value = LInt (Int32.of_string ("-0")) }) 
+	let value_of_exp = function
+		| Literal y -> y
+		| _ -> failwith "error negative expression" in
+	let x = value_of_exp e2.value
+	in let value_of_literal = function
+			| LInt x -> x 
+			| _ -> failwith "error negative expression"
+	in let z = value_of_literal x.value in
+	Literal ({ e2 with value = LInt (Int32.of_string ("-"^(string_of_int (Int32.to_int z)) )) }) 
 }
 (** A local definition *)
 | VAL x = located(var_id) EQUAL e1 = located(expression) SEMICOLON e2=located(expression)
