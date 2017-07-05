@@ -193,10 +193,7 @@ ttype:
 expression:
 | MINUS e2 = located(expression)
 {
-	let b_op = { e2 with value = "`-" } in
-	let e1 = { e2 with value = Literal ({ e2 with value = LInt (Int32.of_string ("0")) }) }
-	in let op = Position.(map (fun x -> Variable (map (fun _ -> Id x) b_op))) b_op in
-    (Apply (op,[],[e1;e2]))
+	Literal ({ e2 with value = LInt (Int32.of_string ("-0")) }) 
 }
 (** A local definition *)
 | VAL x = located(var_id) EQUAL e1 = located(expression) SEMICOLON e2=located(expression)
